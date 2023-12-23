@@ -182,8 +182,8 @@ async def list(ctx, *args):
 
 
 
-@bot.command(aliases=['information', 'fancontent', 'fancontentpolicy'])
+@bot.command(aliases=['information', 'fancontent', 'fancontentpolicy', 'license'])
 async def info(ctx):
-    await ctx.send(content="This JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/)", suppress_embeds=True)
+    await ctx.send(content="This JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/", suppress_embeds=True)
 
 bot.run(dev_env['BOT_TOKEN'])
