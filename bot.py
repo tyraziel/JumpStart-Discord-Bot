@@ -129,8 +129,8 @@ async def list(ctx, *args):
                         scryFallResults = json.loads(req.text)
                         theListThemeCardImageUrl = scryFallResults["image_uris"]["small"]
                         botCache[cacheKey] = theListThemeCardImageUrl
-                    else:
-                        continue
+                    # else:  #this would carry on and report not found if the theme isn't found on scryfall
+                    #     continue
                 else:
                     theListThemeCardImageUrl = botCache[cacheKey]
 
