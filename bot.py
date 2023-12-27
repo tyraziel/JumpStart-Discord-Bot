@@ -120,21 +120,20 @@ async def pick(ctx, *args):
                         for x in range(1,numberOfLists+1):
                             packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']} ({x})", 'Set': dataList['Set']})
 
-        #random.choices(population, k=#) #pick with replacement (aka can have dupes)
-        #random.sample(population, counts=[], k=#) #counts=[] could be interesting here, but we'll avoid it for now
-
-        selectionThemes = ["ELVES", "GOBLINS", "TEFERI", "BASRI", "TREE-HUGGING", "SMASHING", "FEATHERED FRIENDS", "VAMPIRES", "DRAGONS", "ROGUES"]
         selections = []
         if(pickDupes):
-            selections = random.choices(packPopulation, k=pickNumber)
+            selections = random.choices(packPopulation, k=pickNumber) #choices allows dupes
         else:
-            selections = random.sample(packPopulation, k=pickNumber)
+            selections = random.sample(packPopulation, k=pickNumber) #sample does not allow for dupes
 
         resultText = ""
 
         for x in range(0, pickNumber):
             imagesToConcatenate.append(botCache.fetchThemeImageWithCacheScryfallCardImage(selections[x]['Set'], selections[x]['Theme']))
-            resultText = f"{resultText}{selections[x]['List']}\n"
+            if(pickSet != "ALL"):
+                resultText = f"{resultText}{selections[x]['List']}\n"
+            else:
+                resultText = f"{resultText}{selections[x]['List']} [{selections[x]['Set']}]\n"
 
         pickListImage = Image.new('RGBA', (imagesToConcatenate[0].width * pickNumber, imagesToConcatenate[0].height))
 
