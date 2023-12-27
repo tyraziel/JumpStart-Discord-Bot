@@ -5,13 +5,19 @@ from discord import Color
 
 from dotenv import dotenv_values
 
+from PIL import Image
+import io
+
 import argparse
 import requests
 import urllib.parse
 import json
 import time
+import random
 
 import jumpstartdata as jsd
+
+from bot_cache import BotCache
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
@@ -30,15 +36,22 @@ else:
 intents = discord.Intents.default()
 intents.message_content = True
 
-botCache = {}
+botCache = BotCache()
 
 #bot = discord.bot(intents=intents)
 bot = commands.Bot(command_prefix=['!'], intents=intents) #command_prefix can be one item - i.e. '!' or a list - i.e. ['!','#','$']
 
 listParser = argparse.ArgumentParser(prog='!list', description='Simple JumpStart List Query Command', epilog='Example(s):\n!list --set JMP TEFERI\n!list TEFERI', add_help=False, formatter_class=argparse.RawTextHelpFormatter)
-listParser.add_argument('list', action='store')
+listParser.add_argument('list', action='store') #look into nargs so we don't have to "" the lists?  This would introduct string concatination on the list that's the result.
 listParser.add_argument('-s', '--set', choices=['ALL', 'JMP', 'J22', 'DMU', 'BRO', 'ONE', 'MOM', 'LTR'], default='ALL', action='store')
 listParser.add_argument('-n', '--number', choices=['1', '2', '3', '4'], default=1, action='store') #might not want to default to 1 here, but think of a better way to handle this
+
+pickParser = argparse.ArgumentParser(prog='!pick', description='Pick n Random JumpStart Packs Command', epilog='Example(s):\n!pick --set JMP \n!p3 --set J22\n!p3 --set J22 --type themes', add_help=False, formatter_class=argparse.RawTextHelpFormatter)
+pickParser.add_argument('-n', '--number', choices=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], default=3, action='store')
+pickParser.add_argument('-s', '--set', choices=['ALL', 'JMP', 'J22', 'DMU', 'BRO', 'ONE', 'MOM', 'LTR'], default='JMP', action='store')
+pickParser.add_argument('-t', '--type', choices=['themes', 'THEMES', 'Themes', 't', 'T', 'lists', 'LISTS', 'l', 'L', "Lists"], default='themes', action='store')
+pickParser.add_argument('--nodupes', action='store_true')
+#MRCUS - rarity
 
 @bot.event
 async def on_ready():
@@ -73,6 +86,86 @@ async def on_message(message):
 # async def test(ctx, *args):
 #     await ctx.send(args)
 
+@bot.command(name='pick', aliases=['mtga', 'pickem', 'pick3', 'p3'])
+async def pick(ctx, *args):
+    startTime = time.time()
+
+    try:
+        pickArgs = pickParser.parse_args(args)
+
+        pickSet = pickArgs.set.upper()
+        pickNumber = int(pickArgs.number)
+        pickType = pickArgs.type.upper()[0]
+        pickDupes = not pickArgs.nodupes
+
+        imagesToConcatenate = []
+
+        packPopulation = []
+
+        for dataList in jsd.jumpstart:
+            if(dataList['Set'] == pickSet or "ALL" == pickSet):
+                if(pickType == 'T'):
+                    packPopulation.append({'Theme': dataList['Theme'], 'List': dataList['Theme'], 'Set': dataList['Set']})
+                else:
+                    numberOfLists = 1
+
+                    if(dataList['Rarity'] == 'R' or dataList['Rarity'] == 'S'):
+                        numberOfLists = 2
+                    elif(dataList['Rarity'] == 'C'):
+                        numberOfLists = 4
+
+                    if numberOfLists == 1:
+                        packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']}", 'Set': dataList['Set']})
+                    else:
+                        for x in range(1,numberOfLists+1):
+                            packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']} ({x})", 'Set': dataList['Set']})
+
+        #random.choices(population, k=#) #pick with replacement (aka can have dupes)
+        #random.sample(population, counts=[], k=#) #counts=[] could be interesting here, but we'll avoid it for now
+
+        selectionThemes = ["ELVES", "GOBLINS", "TEFERI", "BASRI", "TREE-HUGGING", "SMASHING", "FEATHERED FRIENDS", "VAMPIRES", "DRAGONS", "ROGUES"]
+        selections = []
+        if(pickDupes):
+            selections = random.choices(packPopulation, k=pickNumber)
+        else:
+            selections = random.sample(packPopulation, k=pickNumber)
+
+        resultText = ""
+
+        for x in range(0, pickNumber):
+            imagesToConcatenate.append(botCache.fetchThemeImageWithCacheScryfallCardImage(selections[x]['Set'], selections[x]['Theme']))
+            resultText = f"{resultText}{selections[x]['List']}\n"
+
+        pickListImage = Image.new('RGBA', (imagesToConcatenate[0].width * pickNumber, imagesToConcatenate[0].height))
+
+        for i in range(0, len(imagesToConcatenate)):
+            pickListImage.paste(imagesToConcatenate[i], (imagesToConcatenate[0].width*i, 0))
+
+        with io.BytesIO(pickListImage.tobytes()) as image_binary:
+            pickListImage.save(image_binary, 'PNG')
+            image_binary.seek(0)
+            endTime = time.time()
+
+            embed = discord.Embed(title=f'Pick {pickNumber} Results', color=Color.dark_purple()) #can also have url, description, color
+            if(pickSet != 'ALL'):
+                embed.set_author(name=jsd.sets[pickSet]['Name'], icon_url=jsd.sets[pickSet]['SetIconImageUrl'])
+            
+            embed.add_field(name="", value=resultText, inline=False)
+
+            #Once the data is re-worked it would make more sense to categorize the cards as their main types
+            #embed.add_field(name="Planeswalkers", value="1 PW1\n1 PW2", inline=True)
+            #embed.add_field(name="Creatures", value="1 Creature1\n1 Creature2\n2 Creature3", inline=True)
+            #embed.add_field(name="Sorceries", value="1 Sorcery1\n1 Sorcery2\n1 Sorcery3\n1 Sorcery4", inline=True)
+            #embed.add_field(name="Instants", value="1 Instant1", inline=True)
+            #embed.add_field(name="Artifacts", value="1 Artifact1\n1 Artifact2", inline=True)
+            #embed.add_field(name="Enchantments", value="1 Enchantment1\n1 Enchantment2\n1 Enchantment3", inline=True)
+            #embed.add_field(name="Lands", value="1 Land1\n6 Land2\n1 Land3", inline=True)
+            embed.set_footer(text=f'!pick call took {endTime - startTime:.5f}s')
+
+            await ctx.send(file=discord.File(fp=image_binary, filename='image.png'), embed=embed)
+    except SystemExit as e: #SystemExit is the exception raised by parse_args when there's issues
+        await ctx.send(f'Your command was invalid.\n\n{pickParser.format_help()}')
+
 @bot.command(name='list', aliases=[])
 async def list(ctx, *args):
 
@@ -104,35 +197,9 @@ async def list(ctx, *args):
                 if((dataList['Rarity'] == 'R' and queryNumber < 3) or (dataList['Rarity'] == 'C') or (dataList['Rarity'] == 'S' and queryNumber < 3)):
                     uniqueList = f"{uniqueList} ({queryNumber})"
                     
-                #Get the list from GitHub or the cache
-                cacheKey = f"{dataList['Set']}{dataList['Theme']}{dataList['Rarity']}{dataList['PrimaryColor']}{uniqueList}"
-                if(cacheKey not in botCache):
-                    url = f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/{urllib.parse.quote(dataList["Set"])}/{urllib.parse.quote(uniqueList)}.txt'
-                    #await ctx.send(f"GITHUB PULL: {url}")
-                    req = requests.get(url)
-                    if(req.status_code == requests.codes.ok):
-                        theListText = f'{req.text}'
-                        #await ctx.send(f"CACHE CREATE: {cacheKey}")
-                        botCache[cacheKey] = theListText
-                    # else: #this would carry on and report not found if the list isn't found on the github
-                    #     continue
-                else:
-                    #await ctx.send(f"CACHE HIT: {cacheKey}")
-                    theListText = botCache[cacheKey]
-                
-                #Get the card image url from scryFall or the cache
-                cacheKey = f"{dataList['Set']}{dataList['Theme']}"
-                if(cacheKey not in botCache):
-                    url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(dataList['Theme'])}&pretty=true&set={urllib.parse.quote(jsd.sets[dataList['Set']]['ScryfallFrontSetCode'])}"
-                    req = requests.get(url)
-                    if(req.status_code == requests.codes.ok):
-                        scryFallResults = json.loads(req.text)
-                        theListThemeCardImageUrl = scryFallResults["image_uris"]["small"]
-                        botCache[cacheKey] = theListThemeCardImageUrl
-                    # else:  #this would carry on and report not found if the theme isn't found on scryfall
-                    #     continue
-                else:
-                    theListThemeCardImageUrl = botCache[cacheKey]
+                theListText = botCache.fetchWithCacheGitHubList(dataList['Set'], uniqueList)
+
+                theListThemeCardImageUrl = botCache.fetchThemeImageURLWithCacheScryfallCardJSONURL(dataList['Set'], dataList['Theme'])
 
                 #Figure out color for the side of the embed
                 if(dataList['PrimaryColor'] == "W"):
@@ -175,15 +242,17 @@ async def list(ctx, *args):
         #embed.add_field(name="Artifacts", value="1 Artifact1\n1 Artifact2", inline=True)
         #embed.add_field(name="Enchantments", value="1 Enchantment1\n1 Enchantment2\n1 Enchantment3", inline=True)
         #embed.add_field(name="Lands", value="1 Land1\n6 Land2\n1 Land3", inline=True)
-        embed.set_footer(text=f'!list Query took {endTime - startTime}s')
+        embed.set_footer(text=f'!list Query took {endTime - startTime:.5f}s')
         await ctx.send(embed=embed)
     else:
         await ctx.send(f'Unable to find a JumpStart list for {queryList} ({queryNumber}) in {querySet}')
 
-
+@bot.command(name='stats', aliases=[])
+async def statistics(ctx, *args):
+    await ctx.send(content=str(botCache), suppress_embeds=True)
 
 @bot.command(aliases=['information', 'fancontent', 'fancontentpolicy', 'license'])
 async def info(ctx):
-    await ctx.send(content="This JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/", suppress_embeds=True)
+    await ctx.send(content="Compleat JumpStart Bot v0.1.0-beta\n\nThis JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/ -- 2023", suppress_embeds=True)
 
 bot.run(bot_env['BOT_TOKEN'])

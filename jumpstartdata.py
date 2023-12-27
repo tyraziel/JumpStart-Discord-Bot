@@ -106,7 +106,7 @@ jumpstart = [
     
     {"Set": "BRO", "Theme" : "INFANTRY", "Rarity": "S", "PrimaryColor": "W"},
     {"Set": "BRO", "Theme" : "POWERSTONES", "Rarity": "S", "PrimaryColor": "U"},
-    {"Set": "BRO", "Theme" : "UNEARTH", "Rarity": "S", "PrimaryColor": "B"},
+    {"Set": "BRO", "Theme" : "UNEARTH", "Rarity": "S", "PrimaryColor": "B"},  ##causes scryfall error?
     {"Set": "BRO", "Theme" : "WELDED", "Rarity": "S", "PrimaryColor": "R"},
     {"Set": "BRO", "Theme" : "TITANIC", "Rarity": "S", "PrimaryColor": "G"},
     
