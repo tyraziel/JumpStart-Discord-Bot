@@ -70,6 +70,8 @@ class BotCache:
         #Fixing scryfall strangness
         if(jset == "BRO" and exactCardName == "UNEARTH"):
             exactCardName = "UNEARTH-(THEME)"
+        elif(jset == "J22" and exactCardName == "BLINK"):
+            exactCardName = "BLINK-(FRONT-CARD)"
 
         url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(exactCardName)}&pretty=true&set={urllib.parse.quote(jsd.sets[jset]['ScryfallFrontSetCode'])}"
         req = requests.get(url)
@@ -78,6 +80,7 @@ class BotCache:
         else:
             self.scryFallJSONCardFetchStats['fetchFailures'] = self.scryFallJSONCardFetchStats['fetchFailures'] + 1
             scryFallJSON = json.loads("{}")
+            print(f"FAILURE - '{jset}' '{exactCardName}'\n")
         
         endTime = time.time()
         self.scryFallJSONCardFetchStats['timeFetching'] = self.scryFallJSONCardFetchStats['timeFetching'] + (endTime - startTime)
