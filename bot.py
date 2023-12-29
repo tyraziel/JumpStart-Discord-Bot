@@ -71,19 +71,19 @@ async def on_ready():
             theCurrentSet = dataList['Set']
             #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(sc) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
-            print(f'Bot PING on set change.')
+            #print(f'Bot PING on set change.')
             maxProcessingTime = 7
 
         botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
         time.sleep(100/1000)
         endTime = time.time()
 
-        print(f'{maxProcessingTime} -- {(startTime - endTime)}')
+        #print(f'{maxProcessingTime} -- {(startTime - endTime)}')
         maxProcessingTime = maxProcessingTime + (startTime - endTime)
         if(maxProcessingTime < 0):
             #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(mt) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
-            print(f'Bot PING on processing time.')
+            #print(f'Bot PING on processing time.')
             maxProcessingTime = 7
 
     #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
