@@ -144,6 +144,12 @@ class BotCache:
 
         return cardImage
 
+    def purgeImageCache(self):
+        self.imageCache = {}
+
+    def purgeScryfallJSONCardCache(self):
+        self.scryFallJSONCardCache = {}
+
     def __str__(self):
         return f"""Bot Cache Statistics: (hits / misses / items)
         uniqueListCache       {self.uniqueListCacheStats['cacheHit']} / {self.uniqueListCacheStats['cacheMiss']} / {len(self.uniqueListCache)}
