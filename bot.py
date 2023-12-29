@@ -55,15 +55,45 @@ pickParser.add_argument('--nodupes', action='store_true')
 
 @bot.event
 async def on_ready():
+    #print(f'{jsd.jumpstart}')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
     print(f'We have logged in as {bot.user} with status {bot.status} and activity {bot.activity}')
-    print(f'{jsd.jumpstart}')
+    
+    counter = 0
+    awaitCounter = 0
+    maxProcessingTime = 7
+    theCurrentSet = ""
+
+    for dataList in jsd.jumpstart:
+        startTime = time.time()    
+        counter = counter + 1
+        if(theCurrentSet != dataList['Set']):
+            theCurrentSet = dataList['Set']
+            #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(sc) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
+            print(f'Bot PING on set change.')
+            maxProcessingTime = 7
+
+        botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
+        time.sleep(100/1000)
+        endTime = time.time()
+
+        print(f'{maxProcessingTime} -- {(startTime - endTime)}')
+        maxProcessingTime = maxProcessingTime + (startTime - endTime)
+        if(maxProcessingTime < 0):
+            #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(mt) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
+            print(f'Bot PING on processing time.')
+            maxProcessingTime = 7
+
+    #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
 
 #using @bot.listen() will listen for messages, but will continue processing commands, so having the await bot.process_commands(message) when this is set with @bot.listen() decorator it will fire the command twice.
 @bot.event  
 async def on_message(message):
 
     # print(f'{message.created_at}, Guild: {message.guild}, Channel: {message.channel}, Author: {message.author}, Message: {message.content}')
+    # print(f'{bot.activity}')
 
     if message.author == bot.user: #avoid infinite loops
         return
@@ -85,6 +115,61 @@ async def on_message(message):
 # @bot.command(name='testmultiargs', hidden=True)
 # async def test(ctx, *args):
 #     await ctx.send(args)
+
+@bot.command(name='buildPickCache', aliases=['bPC'], hidden=True)
+@commands.is_owner()
+async def buildPickCache(ctx, *args):
+    startTime = time.time()
+    await ctx.message.id.delete()
+    await ctx.author.send(f'Building Pick Cache... for {len(jsd.jumpstart)} items')
+    theCurrentSet = ""
+    #processingTTL =  (when do we want to send a message?  based on some TTL I'd suppose?)
+    for dataList in jsd.jumpstart:
+        startTime2 = time.time()
+        botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
+        endTime2 = time.time()
+        if(theCurrentSet != dataList['Set']):
+            theCurrentSet = dataList['Set']
+            await ctx.author.send(f"Caching Theme Card Images for Set '{dataList['Set']}'")
+        time.sleep(100/1000)
+
+    endTime = time.time()
+    await ctx.author.send(f'Done Building Pick Cache... took {endTime - startTime:.5f}s')
+    await ctx.author.send(content=str(botCache), suppress_embeds=True)
+
+@bot.command(name='purgeImageCache', aliases=['pIC'], hidden=True)
+@commands.is_owner()
+async def purgeImageCache(ctx, *args):
+    startTime = time.time()
+    await ctx.message.id.delete()
+    await ctx.author.send(f'Purging Image Cache...')
+    botCache.purgeImageCache()
+    endTime = time.time()
+    await ctx.author.send(f'Done Purging Image Cache... took {endTime - startTime:.5f}s')
+
+@bot.command(name='purgeScryfallCache', aliases=['pSC'], hidden=True)
+@commands.is_owner()
+async def purgeScryfallCache(ctx, *args):
+    startTime = time.time()
+    await ctx.message.id.delete()
+    await ctx.author.send(f'Purging Scryfall JSON Card Cache...')
+    botCache.purgeScryfallJSONCardCache()
+    endTime = time.time()
+    await ctx.author.send(f'Done Purging Scryfall JSON Card Cache... took {endTime - startTime:.5f}s')
+
+# @bot.command()
+# @commands.is_owner()
+# async def buildListCache(ctx, *args)
+
+# @bot.command()
+# @commands.is_owner()
+# async def purgeListCache(ctx, *args)
+
+# @bot.command()
+# @commands.is_owner()
+# async def purgeCaches(ctx, *args)
+
+
 
 @bot.command(name='pick', aliases=['mtga', 'pickem', 'pick3', 'p3'])
 async def pick(ctx, *args):
@@ -115,10 +200,10 @@ async def pick(ctx, *args):
                         numberOfLists = 4
 
                     if numberOfLists == 1:
-                        packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']}", 'Set': dataList['Set']})
+                        packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']}", 'Set': dataList['Set'], 'Rarity': dataList['Rarity']})
                     else:
                         for x in range(1,numberOfLists+1):
-                            packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']} ({x})", 'Set': dataList['Set']})
+                            packPopulation.append({'Theme': dataList['Theme'], 'List': f"{dataList['Theme']} ({x})", 'Set': dataList['Set'], 'Rarity': dataList['Rarity']})
 
         selections = []
         if(pickDupes):
@@ -133,7 +218,7 @@ async def pick(ctx, *args):
             if(pickSet != "ALL"):
                 resultText = f"{resultText}{selections[x]['List']}\n"
             else:
-                resultText = f"{resultText}{selections[x]['List']} [{selections[x]['Set']}]\n"
+                resultText = f"{resultText}[{selections[x]['Set']}-{selections[x]['Rarity']}] {selections[x]['List']}\n"
 
         pickListImage = Image.new('RGBA', (imagesToConcatenate[0].width * pickNumber, imagesToConcatenate[0].height))
 
@@ -148,17 +233,7 @@ async def pick(ctx, *args):
             embed = discord.Embed(title=f'Pick {pickNumber} Results', color=Color.dark_purple()) #can also have url, description, color
             if(pickSet != 'ALL'):
                 embed.set_author(name=jsd.sets[pickSet]['Name'], icon_url=jsd.sets[pickSet]['SetIconImageUrl'])
-            
             embed.add_field(name="", value=resultText, inline=False)
-
-            #Once the data is re-worked it would make more sense to categorize the cards as their main types
-            #embed.add_field(name="Planeswalkers", value="1 PW1\n1 PW2", inline=True)
-            #embed.add_field(name="Creatures", value="1 Creature1\n1 Creature2\n2 Creature3", inline=True)
-            #embed.add_field(name="Sorceries", value="1 Sorcery1\n1 Sorcery2\n1 Sorcery3\n1 Sorcery4", inline=True)
-            #embed.add_field(name="Instants", value="1 Instant1", inline=True)
-            #embed.add_field(name="Artifacts", value="1 Artifact1\n1 Artifact2", inline=True)
-            #embed.add_field(name="Enchantments", value="1 Enchantment1\n1 Enchantment2\n1 Enchantment3", inline=True)
-            #embed.add_field(name="Lands", value="1 Land1\n6 Land2\n1 Land3", inline=True)
             embed.set_footer(text=f'!pick call took {endTime - startTime:.5f}s')
 
             await ctx.send(file=discord.File(fp=image_binary, filename='image.png'), embed=embed)
@@ -195,7 +270,7 @@ async def list(ctx, *args):
                 #if the rarity is R, C or S and the user didn't pass in a number, the number 1 is assumed
                 if((dataList['Rarity'] == 'R' and queryNumber < 3) or (dataList['Rarity'] == 'C') or (dataList['Rarity'] == 'S' and queryNumber < 3)):
                     uniqueList = f"{uniqueList} ({queryNumber})"
-                    
+
                 theListText = botCache.fetchWithCacheGitHubList(dataList['Set'], uniqueList)
 
                 theListThemeCardImageUrl = botCache.fetchThemeImageURLWithCacheScryfallCardJSONURL(dataList['Set'], dataList['Theme'])
@@ -252,6 +327,6 @@ async def statistics(ctx, *args):
 
 @bot.command(aliases=['information', 'fancontent', 'fancontentpolicy', 'license'])
 async def info(ctx):
-    await ctx.send(content="Compleat JumpStart Bot v0.1.0-beta\n\nThis JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/ -- 2023", suppress_embeds=True)
+    await ctx.send(content="Compleat JumpStart Bot v0.1.0-beta\n\nThis JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images found at https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/) - Not approved/endorsed by either endpoint (Scryfall, mtg.fandom, fandom, mtgsalvation, wikia)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/ -- 2023", suppress_embeds=True)
 
 bot.run(bot_env['BOT_TOKEN'])
