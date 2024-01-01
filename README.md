@@ -3,4 +3,4 @@ Compleat JumpStart Bot is unofficial Fan Content permitted under the Fan Content
 
 Distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.
 
-Other data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/)
+Other data and images furnished by https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/) - Not approved/endorsed by either endpoint (Scryfall, mtg.fandom, fandom, mtgsalvation, wikia)
