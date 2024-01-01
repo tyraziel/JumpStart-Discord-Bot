@@ -19,8 +19,11 @@ import jumpstartdata as jsd
 
 from bot_cache import BotCache
 
+version = 'v0.2.1-beta'
+
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
+cliParser.add_argument('-l', '--loadcache', default=False, action='store_true')
 cliArgs = cliParser.parse_args()
 
 dev_env = dotenv_values(".devenv")
@@ -64,27 +67,31 @@ async def on_ready():
     maxProcessingTime = 7
     theCurrentSet = ""
 
-    for dataList in jsd.jumpstart:
-        startTime = time.time()    
-        counter = counter + 1
-        if(theCurrentSet != dataList['Set']):
-            theCurrentSet = dataList['Set']
-            #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(sc) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
-            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
-            #print(f'Bot PING on set change.')
-            maxProcessingTime = 7
+    if(cliArgs.loadcache):
+        print(f'We will be pre-fetching theme json from ScryFall\'s API and theme images from the IO site')
+        for dataList in jsd.jumpstart:
+            startTime = time.time()
+            counter = counter + 1
+            if(theCurrentSet != dataList['Set']):
+                theCurrentSet = dataList['Set']
+                #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(sc) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
+                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
+                #print(f'Bot PING on set change.')
+                maxProcessingTime = 7
 
-        botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
-        time.sleep(100/1000)
-        endTime = time.time()
+            botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
+            time.sleep(100/1000)
+            endTime = time.time()
 
-        #print(f'{maxProcessingTime} -- {(startTime - endTime)}')
-        maxProcessingTime = maxProcessingTime + (startTime - endTime)
-        if(maxProcessingTime < 0):
-            #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(mt) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
-            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
-            #print(f'Bot PING on processing time.')
-            maxProcessingTime = 7
+            #print(f'{maxProcessingTime} -- {(startTime - endTime)}')
+            maxProcessingTime = maxProcessingTime + (startTime - endTime)
+            if(maxProcessingTime < 0):
+                #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(mt) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
+                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
+                #print(f'Bot PING on processing time.')
+                maxProcessingTime = 7
+    else:
+        print(f'We are not pre-fetching data at this time.')
 
     #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
 
@@ -99,6 +106,16 @@ async def on_message(message):
         return
     if message.channel.name != 'bot-testing': #only allow processing of messages in the bot-testing channel
         return
+
+    #Fix "auto-completed" en and em dashes
+    message.content = message.content.replace('\u2013', '--')
+    message.content = message.content.replace('\u2014', '--')
+    #Fix fancy single quotes
+    message.content = message.content.replace('\u2018', '\'')
+    message.content = message.content.replace('\u2019', '\'')
+    #Fix fancy double quotes
+    message.content = message.content.replace('\u201C', '"')
+    message.content = message.content.replace('\u201D', '"')
 
     await bot.process_commands(message) #this will continue processing to allow commands to fire.
 
@@ -327,6 +344,6 @@ async def statistics(ctx, *args):
 
 @bot.command(aliases=['information', 'fancontent', 'fancontentpolicy', 'license'])
 async def info(ctx):
-    await ctx.send(content="Compleat JumpStart Bot v0.1.0-beta\n\nThis JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images found at https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/) - Not approved/endorsed by either endpoint (Scryfall, mtg.fandom, fandom, mtgsalvation, wikia)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/ -- 2023", suppress_embeds=True)
+    await ctx.send(content=f"Compleat JumpStart Bot {version}\n\nThis JumpStart Discord Bot is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.  https://company.wizards.com/en/legal/fancontentpolicy\n\nRandomization and distribution of packs/themes via this bot are based on observation, and guesswork, followed by iterations of testing, validation, refinement, observation and more guesswork.\n\nOther data and images found at https://api.scryfall.com/ (https://cards.scryfall.io) and https://static.wikia.nocookie.net/mtgsalvation_gamepedia/ (https://mtg.fandom.com/wiki/) - Not approved/endorsed by either endpoint (Scryfall, mtg.fandom, fandom, mtgsalvation, wikia)\n\nSource Code is released under the MIT License https://github.com/tyraziel/JumpStart-Discord-Bot/ -- 2023", suppress_embeds=True)
 
 bot.run(bot_env['BOT_TOKEN'])
