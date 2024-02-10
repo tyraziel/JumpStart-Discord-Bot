@@ -19,7 +19,7 @@ import jumpstartdata as jsd
 
 from bot_cache import BotCache
 
-version = 'v0.2.1-beta'
+version = 'v0.2.2-beta'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
@@ -207,7 +207,7 @@ async def pick(ctx, *args):
         for dataList in jsd.jumpstart:
             if(dataList['Set'] == pickSet or "ALL" == pickSet):
                 if(pickType == 'T'):
-                    packPopulation.append({'Theme': dataList['Theme'], 'List': dataList['Theme'], 'Set': dataList['Set']})
+                    packPopulation.append({'Theme': dataList['Theme'], 'List': dataList['Theme'], 'Set': dataList['Set'], 'Rarity': dataList['Rarity']})
                 else:
                     numberOfLists = 1
 
