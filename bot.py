@@ -15,26 +15,42 @@ import json
 import time
 import random
 
+import logging
+#import logging.handlers
+#https://docs.python.org/3/library/logging.handlers.html#logging.handlers.RotatingFileHandler
+
 import jumpstartdata as jsd
 
 from bot_cache import BotCache
 
-version = 'v0.2.2-beta'
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(name)-16s] [%(levelname)-8s] %(module)s.%(funcName)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', handlers=[logging.StreamHandler(), logging.FileHandler("./bot-log.log")])
+logger = logging.getLogger()
+dmlogger = logging.getLogger('DirectMessage')
+scCacheLogger = logging.getLogger('ScryFall.Cache')
+
+version = 'v0.2.3-beta'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
 cliParser.add_argument('-l', '--loadcache', default=False, action='store_true')
+cliParser.add_argument('-d', '--debug', default=False, action='store_true')
 cliArgs = cliParser.parse_args()
 
+if cliArgs.debug:
+    logger.setLevel(Logging.DEBUG)
+    dmlogger.setLevel(Logging.DEBUG)
+    scCacheLogger.setLevel(Logging.DEBUG)
+    logger.debug("DEBUG TURNED ON")
+    
 dev_env = dotenv_values(".devenv")
 prod_env = dotenv_values(".prodenv")
 
 bot_env = dev_env
 if('PROD' == cliArgs.env.upper()):
     bot_env = prod_env
-    print(f'THIS IS RUNNING IN PRODUCTION MODE AND WILL CONNECT TO PRODUCTION BOT TO THE MAIN JUMPSTART DISCORD SERVER')
+    logger.info(f'THIS IS RUNNING IN PRODUCTION MODE AND WILL CONNECT TO PRODUCTION BOT TO THE MAIN JUMPSTART DISCORD SERVER')
 else:
-    print(f'This is running DEVELOPMENT MODE and the DEVELOPMENT bot will connect to your test server')
+    logger.info(f'This is running DEVELOPMENT MODE and the DEVELOPMENT bot will connect to your test server')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -60,7 +76,7 @@ pickParser.add_argument('--nodupes', action='store_true')
 async def on_ready():
     #print(f'{jsd.jumpstart}')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
-    print(f'We have logged in as {bot.user} with status {bot.status} and activity {bot.activity}')
+    logger.info(f'We have logged in as {bot.user} with status {bot.status}')
     
     counter = 0
     awaitCounter = 0
@@ -68,12 +84,13 @@ async def on_ready():
     theCurrentSet = ""
 
     if(cliArgs.loadcache):
-        print(f'We will be pre-fetching theme json from ScryFall\'s API and theme images from the IO site')
+        logger.info(f'We will be pre-fetching theme json from ScryFall\'s API and theme images from the IO site')
         for dataList in jsd.jumpstart:
             startTime = time.time()
             counter = counter + 1
             if(theCurrentSet != dataList['Set']):
                 theCurrentSet = dataList['Set']
+                scCacheLogger.info(f"Caching[ScryFall] '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}")
                 #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"Caching(sc) '{dataList['Set']}' {counter}/{len(jsd.jumpstart)}"))
                 await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
                 #print(f'Bot PING on set change.')
@@ -90,8 +107,9 @@ async def on_ready():
                 await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
                 #print(f'Bot PING on processing time.')
                 maxProcessingTime = 7
+        logger.info(f'COMPLEAT: Pre-fetching theme json from ScryFall\'s API and theme images from the IO site')
     else:
-        print(f'We are not pre-fetching data at this time.')
+        logger.info(f'We are not pre-fetching data at this time.')
 
     #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="JumpStart Lo-Fi"))
 
@@ -104,6 +122,10 @@ async def on_message(message):
 
     if message.author == bot.user: #avoid infinite loops
         return
+    if isinstance(message.channel, discord.DMChannel):
+        dmlogger.info(f'{message.created_at}, Channel: {message.channel}, Author: {message.author}, Message: {message.content}')
+        return
+
     if message.channel.name != 'bot-testing': #only allow processing of messages in the bot-testing channel
         return
 
@@ -137,7 +159,7 @@ async def on_message(message):
 @commands.is_owner()
 async def buildPickCache(ctx, *args):
     startTime = time.time()
-    await ctx.message.id.delete()
+    #await ctx.message.id.delete()
     await ctx.author.send(f'Building Pick Cache... for {len(jsd.jumpstart)} items')
     theCurrentSet = ""
     #processingTTL =  (when do we want to send a message?  based on some TTL I'd suppose?)
@@ -158,7 +180,7 @@ async def buildPickCache(ctx, *args):
 @commands.is_owner()
 async def purgeImageCache(ctx, *args):
     startTime = time.time()
-    await ctx.message.id.delete()
+    #await ctx.message.id.delete()
     await ctx.author.send(f'Purging Image Cache...')
     botCache.purgeImageCache()
     endTime = time.time()
@@ -168,7 +190,7 @@ async def purgeImageCache(ctx, *args):
 @commands.is_owner()
 async def purgeScryfallCache(ctx, *args):
     startTime = time.time()
-    await ctx.message.id.delete()
+    #await ctx.message.id.delete()
     await ctx.author.send(f'Purging Scryfall JSON Card Cache...')
     botCache.purgeScryfallJSONCardCache()
     endTime = time.time()
