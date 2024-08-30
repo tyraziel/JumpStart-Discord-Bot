@@ -132,6 +132,17 @@ jumpstart = [
     {"Set": "LTR", "Theme" : "ORCISH", "Rarity": "S", "PrimaryColor": "B"},
     {"Set": "LTR", "Theme" : "RIDERS", "Rarity": "S", "PrimaryColor": "R"},
     {"Set": "LTR", "Theme" : "ELVEN", "Rarity": "S", "PrimaryColor": "G"},
+
+    {"Set": "CLU", "Theme" : "AZORIUS SENATE", "Rarity": "S", "PrimaryColor": "W"},
+    {"Set": "CLU", "Theme" : "ORZHOV SYNDICATE", "Rarity": "S", "PrimaryColor": "W"},
+    {"Set": "CLU", "Theme" : "HOUSE DIMIR", "Rarity": "S", "PrimaryColor": "U"},
+    {"Set": "CLU", "Theme" : "IZZET LEAGUE", "Rarity": "S", "PrimaryColor": "U"},
+    {"Set": "CLU", "Theme" : "CULT OF RAKDOS", "Rarity": "S", "PrimaryColor": "B"},
+    {"Set": "CLU", "Theme" : "GOLGARI SWARM", "Rarity": "S", "PrimaryColor": "B"},
+    {"Set": "CLU", "Theme" : "GRUUL CLANS", "Rarity": "S", "PrimaryColor": "R"},
+    {"Set": "CLU", "Theme" : "BOROS LEGION", "Rarity": "S", "PrimaryColor": "R"},
+    {"Set": "CLU", "Theme" : "SELESNYA CONCLAVE", "Rarity": "S", "PrimaryColor": "G"},
+    {"Set": "CLU", "Theme" : "SIMIC COMBINE", "Rarity": "S", "PrimaryColor": "G"},
 ]
 #To fix for display --- string.lower().title() should capitalize the first letter of each string, including after dashes
 
@@ -141,5 +152,6 @@ sets = {"JMP": {"Name": "JumpStart 2020", "SetCode": "JMP", "ScryfallFrontSetCod
         "BRO": {"Name": "The Brother's War JumpStart", "SetCode": "BRO", "ScryfallFrontSetCode": "fbro", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/1/12/BRO_expansion_symbol.png/revision/latest?cb=20221208023049"},
         "ONE": {"Name": "Phyrexia: All Will Be One JumpStart", "SetCode": "ONE", "ScryfallFrontSetCode": "fone", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/70/ONE_expansion_symbol.png/revision/latest?cb=20221208023207"},
         "MOM": {"Name": "March of the Machine JumpStart", "SetCode": "MOM", "ScryfallFrontSetCode": "fmom", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/5/50/MOM_expansion_symbol.png/revision/latest?cb=20221213222255"},
-        "LTR": {"Name": "The Lord of the Rings: Tales of Middle-earth JumpStart", "SetCode": "LTR", "ScryfallFrontSetCode": "fltr", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/7b/LTR_expansion_symbol.png/revision/latest?cb=20230221204226"}
+        "LTR": {"Name": "The Lord of the Rings: Tales of Middle-earth JumpStart", "SetCode": "LTR", "ScryfallFrontSetCode": "fltr", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/7b/LTR_expansion_symbol.png/revision/latest?cb=20230221204226"},
+        "CLU": {"Name": "Ravnica: Clue Edition", "SetCode": "CLU", "ScryfallFrontSetCode": "fclu", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/f/ff/CLU_expansion_symbol.png/revision/latest?cb=20231205221115"}
 }
