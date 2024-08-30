@@ -28,12 +28,13 @@ logger = logging.getLogger()
 dmlogger = logging.getLogger('DirectMessage')
 scCacheLogger = logging.getLogger('ScryFall.Cache')
 
-version = 'v0.2.3-beta'
+version = 'v1.0.0-ga'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
 cliParser.add_argument('-l', '--loadcache', default=False, action='store_true')
 cliParser.add_argument('-d', '--debug', default=False, action='store_true')
+cliParser.add_argument('-t', '--test', default=False, action='store_true')
 cliArgs = cliParser.parse_args()
 
 if cliArgs.debug:
@@ -126,7 +127,7 @@ async def on_message(message):
         dmlogger.info(f'{message.created_at}, Channel: {message.channel}, Author: {message.author}, Message: {message.content}')
         return
 
-    if message.channel.name != 'bot-testing': #only allow processing of messages in the bot-testing channel
+    if cliArgs.test and message.channel.name != 'bot-testing': #only allow processing of messages in the bot-testing channel
         return
 
     #Fix "auto-completed" en and em dashes
