@@ -72,6 +72,9 @@ class BotCache:
             exactCardName = "UNEARTH-(THEME)"
         elif(jset == "J22" and exactCardName == "BLINK"):
             exactCardName = "BLINK-(FRONT-CARD)"
+        #too many -> TOO-MANY
+        #ne'er-do-wells -> neer-do-wells
+        #fun guys -> FUN-GUYS
 
         url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(exactCardName)}&pretty=true&set={urllib.parse.quote(jsd.sets[jset]['ScryfallFrontSetCode'])}"
         req = requests.get(url)
