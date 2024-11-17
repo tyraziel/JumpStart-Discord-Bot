@@ -176,7 +176,7 @@ jumpstart = [
     {"Set": "J25", "Theme" : "ARMED", "Rarity": "C", "PrimaryColor": "W"},
     {"Set": "J25", "Theme" : "ENCHANTED", "Rarity": "C", "PrimaryColor": "W"},
     {"Set": "J25", "Theme" : "SOARING", "Rarity": "C", "PrimaryColor": "U"},
-    {"Set": "J25", "Theme" : "SUPRISE!", "Rarity": "C", "PrimaryColor": "U"},
+    {"Set": "J25", "Theme" : "SURPRISE!", "Rarity": "C", "PrimaryColor": "U"},
     {"Set": "J25", "Theme" : "BOOKWORMS", "Rarity": "C", "PrimaryColor": "U"},
     {"Set": "J25", "Theme" : "INVENTIVE", "Rarity": "C", "PrimaryColor": "U"},
     {"Set": "J25", "Theme" : "CLERICS", "Rarity": "C", "PrimaryColor": "B"},
@@ -193,15 +193,15 @@ jumpstart = [
     {"Set": "J25", "Theme" : "LANDFALL", "Rarity": "C", "PrimaryColor": "G"},
 
     {"Set": "FDN", "Theme" : "CATS", "Rarity": "U", "PrimaryColor": "W"},
-    {"Set": "FDN", "Theme" : "HEALING", "Rarity": "U", "PrimaryColor": "W"},
-    {"Set": "FDN", "Theme" : "WIZARDS", "Rarity": "U", "PrimaryColor": "U"},
-    {"Set": "FDN", "Theme" : "PIRATES", "Rarity": "U", "PrimaryColor": "U"},
+#     {"Set": "FDN", "Theme" : "HEALING", "Rarity": "U", "PrimaryColor": "W"},
+#     {"Set": "FDN", "Theme" : "WIZARDS", "Rarity": "U", "PrimaryColor": "U"},
+#     {"Set": "FDN", "Theme" : "PIRATES", "Rarity": "U", "PrimaryColor": "U"},
     {"Set": "FDN", "Theme" : "VAMPIRES", "Rarity": "U", "PrimaryColor": "B"},
-    {"Set": "FDN", "Theme" : "UNDEAD", "Rarity": "U", "PrimaryColor": "B"},
-    {"Set": "FDN", "Theme" : "GOBLINS", "Rarity": "U", "PrimaryColor": "R"},
-    {"Set": "FDN", "Theme" : "INFERNO", "Rarity": "U", "PrimaryColor": "R"},
-    {"Set": "FDN", "Theme" : "ELVES", "Rarity": "U", "PrimaryColor": "G"},
-    {"Set": "FDN", "Theme" : "PRIMAL", "Rarity": "U", "PrimaryColor": "G"},
+#     {"Set": "FDN", "Theme" : "UNDEAD", "Rarity": "U", "PrimaryColor": "B"},
+#     {"Set": "FDN", "Theme" : "GOBLINS", "Rarity": "U", "PrimaryColor": "R"},
+#     {"Set": "FDN", "Theme" : "INFERNO", "Rarity": "U", "PrimaryColor": "R"},
+#     {"Set": "FDN", "Theme" : "ELVES", "Rarity": "U", "PrimaryColor": "G"},
+#     {"Set": "FDN", "Theme" : "PRIMAL", "Rarity": "U", "PrimaryColor": "G"},
 ]
 #To fix for display --- string.lower().title() should capitalize the first letter of each string, including after dashes
 

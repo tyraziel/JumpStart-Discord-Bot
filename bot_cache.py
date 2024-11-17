@@ -72,6 +72,10 @@ class BotCache:
             exactCardName = "UNEARTH-(THEME)"
         elif(jset == "J22" and exactCardName == "BLINK"):
             exactCardName = "BLINK-(FRONT-CARD)"
+        elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
+            exactCardName = "NEER-DO-WELLS"
+        # elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
+        #     exactCardName = "NEER-DO-WELLS"
         #too many -> TOO-MANY
         #ne'er-do-wells -> neer-do-wells
         #fun guys -> FUN-GUYS

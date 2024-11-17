@@ -28,7 +28,7 @@ logger = logging.getLogger()
 dmlogger = logging.getLogger('DirectMessage')
 scCacheLogger = logging.getLogger('ScryFall.Cache')
 
-version = 'v1.0.4-ga'
+version = 'v1.0.5-ga'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
@@ -38,9 +38,9 @@ cliParser.add_argument('-t', '--test', default=False, action='store_true')
 cliArgs = cliParser.parse_args()
 
 if cliArgs.debug:
-    logger.setLevel(Logging.DEBUG)
-    dmlogger.setLevel(Logging.DEBUG)
-    scCacheLogger.setLevel(Logging.DEBUG)
+    logger.setLevel(logging.DEBUG)
+    dmlogger.setLevel(logging.DEBUG)
+    scCacheLogger.setLevel(logging.DEBUG)
     logger.debug("DEBUG TURNED ON")
     
 dev_env = dotenv_values(".devenv")
