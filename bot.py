@@ -28,7 +28,7 @@ logger = logging.getLogger()
 dmlogger = logging.getLogger('DirectMessage')
 scCacheLogger = logging.getLogger('ScryFall.Cache')
 
-version = 'v1.0.3-ga'
+version = 'v1.0.4-ga'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
@@ -63,12 +63,12 @@ bot = commands.Bot(command_prefix=['!'], intents=intents) #command_prefix can be
 
 listParser = argparse.ArgumentParser(prog='!list', description='Simple JumpStart List Query Command', epilog='Example(s):\n!list --set JMP TEFERI\n!list TEFERI', add_help=False, formatter_class=argparse.RawTextHelpFormatter)
 listParser.add_argument('list', action='store') #look into nargs so we don't have to "" the lists?  This would introduct string concatination on the list that's the result.
-listParser.add_argument('-s', '--set', choices=['ALL', 'JMP', 'J22', 'DMU', 'BRO', 'ONE', 'MOM', 'LTR', 'CLU'], default='ALL', action='store')
+listParser.add_argument('-s', '--set', choices=['ALL', 'JMP', 'J22', 'DMU', 'BRO', 'ONE', 'MOM', 'LTR', 'CLU', 'J25', 'FDN'], default='ALL', action='store')
 listParser.add_argument('-n', '--number', choices=['1', '2', '3', '4'], default=1, action='store') #might not want to default to 1 here, but think of a better way to handle this
 
 pickParser = argparse.ArgumentParser(prog='!pick', description='Pick n Random JumpStart Packs Command', epilog='Example(s):\n!pick --set JMP \n!p3 --set J22\n!p3 --set J22 --type themes', add_help=False, formatter_class=argparse.RawTextHelpFormatter)
 pickParser.add_argument('-n', '--number', choices=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], default=3, action='store')
-pickParser.add_argument('-s', '--set', choices=['ALL', 'JMP', 'J22', 'DMU', 'BRO', 'ONE', 'MOM', 'LTR', 'CLU'], default='JMP', action='store')
+pickParser.add_argument('-s', '--set', choices=['ALL', 'JMP', 'J22', 'DMU', 'BRO', 'ONE', 'MOM', 'LTR', 'CLU', 'J25', 'FDN'], default='JMP', action='store')
 pickParser.add_argument('-t', '--type', choices=['themes', 'THEMES', 'Themes', 't', 'T', 'lists', 'LISTS', 'l', 'L', "Lists"], default='themes', action='store')
 pickParser.add_argument('--nodupes', action='store_true')
 #MRCUS - rarity
