@@ -28,7 +28,7 @@ logger = logging.getLogger()
 dmlogger = logging.getLogger('DirectMessage')
 scCacheLogger = logging.getLogger('ScryFall.Cache')
 
-version = 'v1.0.1-ga'
+version = 'v1.0.2-ga'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
