@@ -28,7 +28,7 @@ logger = logging.getLogger()
 dmlogger = logging.getLogger('DirectMessage')
 scCacheLogger = logging.getLogger('ScryFall.Cache')
 
-version = 'v1.0.1-ga'
+version = 'v1.0.3-ga'
 
 cliParser = argparse.ArgumentParser(prog='compleat_bot', description='JumpStart Compleat Bot', epilog='', add_help=False)
 cliParser.add_argument('-e', '--env', choices=['DEV', 'PROD'], default='DEV', action='store')
@@ -176,6 +176,16 @@ async def buildPickCache(ctx, *args):
     endTime = time.time()
     await ctx.author.send(f'Done Building Pick Cache... took {endTime - startTime:.5f}s')
     await ctx.author.send(content=str(botCache), suppress_embeds=True)
+
+@bot.command(name='purgeListCache', aliases=['pLC'], hidden=True)
+@commands.is_owner()
+async def purgeImageCache(ctx, *args):
+    startTime = time.time()
+    #await ctx.message.id.delete()
+    await ctx.author.send(f'Purging List Cache...')
+    botCache.purgeListCache()
+    endTime = time.time()
+    await ctx.author.send(f'Done Purging List Cache... took {endTime - startTime:.5f}s')
 
 @bot.command(name='purgeImageCache', aliases=['pIC'], hidden=True)
 @commands.is_owner()

@@ -133,6 +133,7 @@ jumpstart = [
     {"Set": "LTR", "Theme" : "RIDERS", "Rarity": "S", "PrimaryColor": "R"},
     {"Set": "LTR", "Theme" : "ELVEN", "Rarity": "S", "PrimaryColor": "G"},
 
+    #With CLU Azorius 1 is W and Azorius 2 is U - this is true for the other guild packs:  https://mtg.fandom.com/wiki/Ravnica:_Clue_Edition/Decklists
     {"Set": "CLU", "Theme" : "AZORIUS SENATE", "Rarity": "S", "PrimaryColor": "W"},
     {"Set": "CLU", "Theme" : "ORZHOV SYNDICATE", "Rarity": "S", "PrimaryColor": "W"},
     {"Set": "CLU", "Theme" : "HOUSE DIMIR", "Rarity": "S", "PrimaryColor": "U"},
@@ -153,5 +154,6 @@ sets = {"JMP": {"Name": "JumpStart 2020", "SetCode": "JMP", "ScryfallFrontSetCod
         "ONE": {"Name": "Phyrexia: All Will Be One JumpStart", "SetCode": "ONE", "ScryfallFrontSetCode": "fone", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/70/ONE_expansion_symbol.png/revision/latest?cb=20221208023207"},
         "MOM": {"Name": "March of the Machine JumpStart", "SetCode": "MOM", "ScryfallFrontSetCode": "fmom", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/5/50/MOM_expansion_symbol.png/revision/latest?cb=20221213222255"},
         "LTR": {"Name": "The Lord of the Rings: Tales of Middle-earth JumpStart", "SetCode": "LTR", "ScryfallFrontSetCode": "fltr", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/7b/LTR_expansion_symbol.png/revision/latest?cb=20230221204226"},
-        "CLU": {"Name": "Ravnica: Clue Edition", "SetCode": "CLU", "ScryfallFrontSetCode": "fclu", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/f/ff/CLU_expansion_symbol.png/revision/latest?cb=20231205221115"}
+        "CLU": {"Name": "Ravnica: Clue Edition", "SetCode": "CLU", "ScryfallFrontSetCode": "fclu", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/f/ff/CLU_expansion_symbol.png/revision/latest?cb=20231205221115"},
+        "J25": {"Name": "Foundations JumpStart", "SetCode": "J25", "ScryfallFrontSetCode": "fj25", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/5/53/J25_expansion_symbol.png/revision/latest?cb=20240802205728"}
 }

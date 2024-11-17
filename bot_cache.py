@@ -150,6 +150,9 @@ class BotCache:
     def purgeScryfallJSONCardCache(self):
         self.scryFallJSONCardCache = {}
 
+    def purgeListCache(self):
+        self.uniqueListCache = {}
+
     def __str__(self):
         return f"""Bot Cache Statistics: (hits / misses / items)
         uniqueListCache       {self.uniqueListCacheStats['cacheHit']} / {self.uniqueListCacheStats['cacheMiss']} / {len(self.uniqueListCache)}
