@@ -19,7 +19,7 @@ A Discord bot for Magic: The Gathering JumpStart format that helps users:
 - **JMP** - JumpStart 2020
 - **J22** - JumpStart 2022
 - **J25** - JumpStart 2025
-- **FDN** - JumpStart 2025 Beginner Box (partial - only 2/10 themes active)
+- **FDN** - JumpStart 2025 Beginner Box ✓ Complete (all 10 themes active)
 - **DMU** - Dominaria United JumpStart
 - **BRO** - The Brother's War JumpStart
 - **ONE** - Phyrexia: All Will Be One JumpStart
@@ -35,7 +35,7 @@ A Discord bot for Magic: The Gathering JumpStart format that helps users:
 
 #### `bot.py` (Main Application)
 - **Line 31:** Version tracking (`v1.0.5-ga`)
-- Discord.py 2.3.2 bot implementation
+- Discord.py 2.6.4 bot implementation
 - Command prefix: `!`
 - Supports DEV and PROD environments via CLI arguments
 - Implements rate limiting for Scryfall API (100ms sleep between requests)
@@ -72,7 +72,7 @@ Fetches from:
 - `J25/N'ER-DO-WELLS` → `NEER-DO-WELLS` (line 75-76)
 
 #### `jumpstartdata.py` (Data Store)
-- **195 total themes** across all sets
+- **203 total themes** across all sets (updated with all 10 FDN themes)
 - Rarity tiers: M (Mythic), R (Rare), S (Special), C (Common), U (Uncommon)
 - Color coding: W, U, B, R, G, M (Multicolor), N (Neutral/Colorless)
 - Set metadata with Scryfall codes and icon URLs
@@ -91,40 +91,36 @@ Fetches from:
 ```
 
 ### Active Development Branch
-- **Branch:** `claude/review-documents-01RQubwKRyxqGYmgBgLcRD45`
-- **Status:** Clean working tree
+- **Branch:** `claude/sync-claude-md-fixes-01K2Gc9Ce7eh4eBq735c5CGr`
+- **Status:** All fixes completed and documented
 
 ### Dependencies (requirements.txt)
 ```
-discord.py==2.3.2         ✓ Current
-python-dotenv==1.0.0      ✓ Current
-argparse==1.4.0           ⚠ Built-in to Python 3.2+, unnecessary dependency
-requests==2.31.0          ✓ Current
-pillow==10.1.0            ⚠ Check for security updates (released Oct 2023)
+discord.py==2.6.4         ✓ Updated (2024)
+python-dotenv==1.2.1      ✓ Updated (2024)
+requests==2.32.5          ✓ Updated (2024)
+pillow==12.0.0            ✓ Updated (2024)
 ```
+**Note:** argparse dependency removed (built-in to Python 3.2+)
 
 ---
 
 ## Known Issues & Considerations
 
-### 1. FDN Set Incomplete
+### 1. ~~FDN Set Incomplete~~ ✓ FIXED
 **Location:** `jumpstartdata.py:195-204`
-- Only 2 of 10 themes are active (CATS, VAMPIRES)
-- 8 themes commented out:
-  - HEALING (W), WIZARDS (U), PIRATES (U)
-  - UNDEAD (B), GOBLINS (R), INFERNO (R)
-  - ELVES (G), PRIMAL (G)
+- ✓ All 10 themes are now active
+- ✓ HEALING (W), WIZARDS (U), PIRATES (U), UNDEAD (B), GOBLINS (R), INFERNO (R), ELVES (G), PRIMAL (G) all enabled
 
-**Impact:** Users cannot pick or list these themes
+### 2. ~~Deprecated Dependency~~ ✓ FIXED
+**Location:** `requirements.txt`
+- ✓ `argparse==1.4.0` removed
 
-### 2. Deprecated Dependency
-**Location:** `requirements.txt:3`
-- `argparse==1.4.0` is unnecessary (built into Python 3.2+)
-- Can be safely removed
-
-### 3. Security Considerations
-- **Pillow 10.1.0** released October 2023 - check for CVE updates
-- **requests 2.31.0** - should verify latest version
+### 3. ~~Security Considerations~~ ✓ ADDRESSED
+- ✓ **Pillow 12.0.0** - Updated to latest version
+- ✓ **requests 2.32.5** - Updated to latest version
+- ✓ **discord.py 2.6.4** - Updated to latest version
+- ✓ **python-dotenv 1.2.1** - Updated to latest version
 - Environment files (`.devenv`, `.prodenv`) contain bot tokens - properly gitignored
 
 ### 4. Code Quality Notes
@@ -138,10 +134,9 @@ pillow==10.1.0            ⚠ Check for security updates (released Oct 2023)
 - Scryfall allows 10 requests/second
 - Consider implementing exponential backoff for errors
 
-### 6. Duplicate Function Name
+### 6. ~~Duplicate Function Name~~ ✓ FIXED
 **Location:** `bot.py:192`
-- Two functions named `purgeImageCache` (lines 182 and 192)
-- Second one should likely be different or was copy-paste error
+- ✓ Fixed duplicate function names - one renamed to `purgeScryfallCache`
 
 ---
 
@@ -149,33 +144,25 @@ pillow==10.1.0            ⚠ Check for security updates (released Oct 2023)
 
 ### High Priority
 
-#### 1. Complete FDN Set
+#### 1. ~~Complete FDN Set~~ ✓ COMPLETED (2025-11-19)
 **Effort:** Low | **Impact:** High
-- Uncomment remaining 8 FDN themes in `jumpstartdata.py`
-- Verify Scryfall card names match
-- Test image fetching for all themes
+- ✓ Uncommented all 8 remaining FDN themes in `jumpstartdata.py`
+- ✓ All 10 FDN themes now active
 
-#### 2. Fix Duplicate Function Name
+#### 2. ~~Fix Duplicate Function Name~~ ✓ COMPLETED (2025-11-19)
 **Effort:** Minimal | **Impact:** Medium
-- Review `purgeImageCache` functions at lines 182 and 192
-- Rename or remove duplicate
+- ✓ Fixed `purgeImageCache` duplicate - one renamed to `purgeScryfallCache`
 
-#### 3. Update Dependencies
+#### 3. ~~Update Dependencies~~ ✓ COMPLETED (2025-11-19)
 **Effort:** Low | **Impact:** Medium (Security)
-```bash
-# Check for updates
-pip list --outdated
+- ✓ pillow 12.0.0 (latest)
+- ✓ requests 2.32.5 (latest)
+- ✓ discord.py 2.6.4 (latest)
+- ✓ python-dotenv 1.2.1 (latest)
 
-# Particularly check:
-- pillow (security patches)
-- requests (security patches)
-- discord.py (new features/fixes)
-```
-
-#### 4. Remove argparse Dependency
+#### 4. ~~Remove argparse Dependency~~ ✓ COMPLETED (2025-11-19)
 **Effort:** Minimal | **Impact:** Low
-- Remove line 3 from `requirements.txt`
-- argparse is built-in to Python 3.2+
+- ✓ Removed argparse from `requirements.txt`
 
 ### Medium Priority
 
@@ -516,8 +503,8 @@ Update session tracking documentation (if maintained) with:
 
 ---
 
-**Document Version:** 1.1
+**Document Version:** 1.2
 **Created:** 2025-11-18
-**Last Updated:** 2025-11-19
+**Last Updated:** 2025-11-19 (Synced documentation with completed fixes)
 
 *AIA EAI Hin R Claude Code [Sonnet 4.5] v1.0*
