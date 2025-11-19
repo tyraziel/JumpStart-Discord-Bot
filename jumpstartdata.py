@@ -214,5 +214,7 @@ sets = {"JMP": {"Name": "JumpStart 2020", "SetCode": "JMP", "ScryfallFrontSetCod
         "ONE": {"Name": "Phyrexia: All Will Be One JumpStart", "SetCode": "ONE", "ScryfallFrontSetCode": "fone", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/70/ONE_expansion_symbol.png/revision/latest?cb=20221208023207"},
         "MOM": {"Name": "March of the Machine JumpStart", "SetCode": "MOM", "ScryfallFrontSetCode": "fmom", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/5/50/MOM_expansion_symbol.png/revision/latest?cb=20221213222255"},
         "LTR": {"Name": "The Lord of the Rings: Tales of Middle-earth JumpStart", "SetCode": "LTR", "ScryfallFrontSetCode": "fltr", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/7b/LTR_expansion_symbol.png/revision/latest?cb=20230221204226"},
-        "CLU": {"Name": "Ravnica: Clue Edition", "SetCode": "CLU", "ScryfallFrontSetCode": "fclu", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/f/ff/CLU_expansion_symbol.png/revision/latest?cb=20231205221115"}
+        "CLU": {"Name": "Ravnica: Clue Edition", "SetCode": "CLU", "ScryfallFrontSetCode": "fclu", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/f/ff/CLU_expansion_symbol.png/revision/latest?cb=20231205221115"},
+        "TLA": {"Name": "Avatar: The Last Airbender JumpStart", "SetCode": "TLA", "ScryfallFrontSetCode": "jtla", "SetIconImageUrl": ""},
+        "TLB": {"Name": "Avatar: The Last Airbender Beginner Box", "SetCode": "TLB", "ScryfallFrontSetCode": "ftla", "SetIconImageUrl": ""}
 }
