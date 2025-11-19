@@ -179,7 +179,7 @@ async def buildPickCache(ctx, *args):
 
 @bot.command(name='purgeListCache', aliases=['pLC'], hidden=True)
 @commands.is_owner()
-async def purgeImageCache(ctx, *args):
+async def purgeListCache(ctx, *args):
     startTime = time.time()
     #await ctx.message.id.delete()
     await ctx.author.send(f'Purging List Cache...')
