@@ -202,6 +202,17 @@ jumpstart = [
     {"Set": "FDN", "Theme" : "INFERNO", "Rarity": "U", "PrimaryColor": "R"},
     {"Set": "FDN", "Theme" : "ELVES", "Rarity": "U", "PrimaryColor": "G"},
     {"Set": "FDN", "Theme" : "PRIMAL", "Rarity": "U", "PrimaryColor": "G"},
+
+    {"Set": "TLB", "Theme" : "ALLIES", "Rarity": "U", "PrimaryColor": "W"},
+    {"Set": "TLB", "Theme" : "AANG TUTORIAL", "Rarity": "U", "PrimaryColor": "W"},
+    {"Set": "TLB", "Theme" : "SPELLS", "Rarity": "U", "PrimaryColor": "U"},
+    {"Set": "TLB", "Theme" : "WATERBENDING", "Rarity": "U", "PrimaryColor": "U"},
+    {"Set": "TLB", "Theme" : "ATTACKING", "Rarity": "U", "PrimaryColor": "B"},
+    {"Set": "TLB", "Theme" : "COUNTERS", "Rarity": "U", "PrimaryColor": "B"},
+    {"Set": "TLB", "Theme" : "FIREBENDING", "Rarity": "U", "PrimaryColor": "R"},
+    {"Set": "TLB", "Theme" : "ZUKO TUTORIAL", "Rarity": "U", "PrimaryColor": "R"},
+    {"Set": "TLB", "Theme" : "BIG CREATURES", "Rarity": "U", "PrimaryColor": "G"},
+    {"Set": "TLB", "Theme" : "EARTHBENDING", "Rarity": "U", "PrimaryColor": "G"},
 ]
 #To fix for display --- string.lower().title() should capitalize the first letter of each string, including after dashes
 
