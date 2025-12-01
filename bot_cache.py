@@ -70,8 +70,8 @@ class BotCache:
         #Fixing scryfall strangness
         if(jset == "BRO" and exactCardName == "UNEARTH"):
             exactCardName = "UNEARTH-(THEME)"
-        elif(jset == "J22" and exactCardName == "BLINK"):
-            exactCardName = "BLINK-(FRONT-CARD)"
+        # elif(jset == "J22" and exactCardName == "BLINK"):
+        #     exactCardName = "BLINK-(FRONT-CARD)"
         elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
             exactCardName = "NEER-DO-WELLS"
         # elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
