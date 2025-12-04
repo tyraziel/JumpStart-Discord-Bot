@@ -14,6 +14,10 @@ class BotCache:
     uniqueListCacheStats = {'cacheHit': 0, 'cacheMiss': 0}
     uniqueListFetchStats = {'fetchCount': 0, 'fetchFailures': 0, 'timeFetching': 0}
 
+    deckJSONCache = {}
+    deckJSONCacheStats = {'cacheHit': 0, 'cacheMiss': 0}
+    deckJSONFetchStats = {'fetchCount': 0, 'fetchFailures': 0, 'timeFetching': 0}
+
     scryFallJSONCardCache = {}
     scryFallJSONCardCacheStats = {'cacheHit': 0, 'cacheMiss': 0}
     scryFallJSONCardFetchStats = {'fetchCount': 0, 'fetchFailures': 0, 'timeFetching': 0}
@@ -59,6 +63,42 @@ class BotCache:
             theListText = self.uniqueListCache[cacheKey]
 
         return theListText
+
+    #Get the deck JSON from GitHub
+    def fetchGitHubDeckJSON(self, jset, uniqueList):
+        deckJSON = {}
+
+        startTime = time.time()
+        self.deckJSONFetchStats['fetchCount'] = self.deckJSONFetchStats['fetchCount'] + 1
+
+        url = f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/{urllib.parse.quote(jset)}/{urllib.parse.quote(uniqueList)}.json'
+        req = requests.get(url)
+
+        if(req.status_code == requests.codes.ok):
+            deckJSON = json.loads(req.text)
+        else:
+            self.deckJSONFetchStats['fetchFailures'] = self.deckJSONFetchStats['fetchFailures'] + 1
+            deckJSON = {}
+
+        endTime = time.time()
+        self.deckJSONFetchStats['timeFetching'] = self.deckJSONFetchStats['timeFetching'] + (endTime - startTime)
+
+        return deckJSON
+
+    #Get the deck JSON from GitHub or the cache
+    def fetchWithCacheGitHubDeckJSON(self, jset, uniqueList):
+        deckJSON = {}
+
+        cacheKey = f"{jset}{uniqueList}"
+        if(cacheKey not in self.deckJSONCache):
+            self.deckJSONCacheStats['cacheMiss'] = self.deckJSONCacheStats['cacheMiss'] + 1
+            deckJSON = self.fetchGitHubDeckJSON(jset, uniqueList)
+            self.deckJSONCache[cacheKey] = deckJSON
+        else:
+            self.deckJSONCacheStats['cacheHit'] = self.deckJSONCacheStats['cacheHit'] + 1
+            deckJSON = self.deckJSONCache[cacheKey]
+
+        return deckJSON
 
     #Get the JSON from ScryFall (be nice with hitting this)
     def fetchScryFallCardJSON(self, jset, exactCardName):
@@ -160,14 +200,19 @@ class BotCache:
     def purgeListCache(self):
         self.uniqueListCache = {}
 
+    def purgeDeckJSONCache(self):
+        self.deckJSONCache = {}
+
     def __str__(self):
         return f"""Bot Cache Statistics: (hits / misses / items)
         uniqueListCache       {self.uniqueListCacheStats['cacheHit']} / {self.uniqueListCacheStats['cacheMiss']} / {len(self.uniqueListCache)}
+        deckJSONCache         {self.deckJSONCacheStats['cacheHit']} / {self.deckJSONCacheStats['cacheMiss']} / {len(self.deckJSONCache)}
         scryFallJSONCardCache {self.scryFallJSONCardCacheStats['cacheHit']} / {self.scryFallJSONCardCacheStats['cacheMiss']} / {len(self.scryFallJSONCardCache)}
         imageCache            {self.imageCacheStats['cacheHit']} / {self.imageCacheStats['cacheMiss']} / {len(self.imageCache)}
 
 Bot Fetch Statistics: (fetches (failures)/ total time)
         uniqueListFetch       {self.uniqueListFetchStats['fetchCount']} ({self.uniqueListFetchStats['fetchFailures']}) / {self.uniqueListFetchStats['timeFetching']}
+        deckJSONFetch         {self.deckJSONFetchStats['fetchCount']} ({self.deckJSONFetchStats['fetchFailures']}) / {self.deckJSONFetchStats['timeFetching']}
         scryFallJSONCardFetch {self.scryFallJSONCardFetchStats['fetchCount']} ({self.scryFallJSONCardFetchStats['fetchFailures']}) / {self.scryFallJSONCardFetchStats['timeFetching']}
         imageFetch            {self.imageFetchStats['fetchCount']} ({self.imageFetchStats['fetchFailures']}) / {self.imageFetchStats['timeFetching']}
         """

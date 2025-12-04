@@ -263,7 +263,7 @@ jumpstart = [
 ]
 #To fix for display --- string.lower().title() should capitalize the first letter of each string, including after dashes
 
-sets = {"JMP": {"Name": "JumpStart 2020", "SetCode": "JMP", "ScryfallFrontSetCode": "fjmp", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/e/e4/Jumpstart_expansion_symbol.png/revision/latest?cb=20191012054123"}, 
+sets = {"JMP": {"Name": "JumpStart 2020", "SetCode": "JMP", "ScryfallFrontSetCode": "fjmp", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/e/e4/Jumpstart_expansion_symbol.png/revision/latest?cb=20191012054123"},
         "J22": {"Name": "JumpStart 2022", "SetCode": "J22", "ScryfallFrontSetCode": "fj22", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/7/7c/J22_expansion_symbol.png/revision/latest?cb=20221021110742"},
         "J25": {"Name": "JumpStart 2025", "SetCode": "J25", "ScryfallFrontSetCode": "fj25", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/5/53/J25_expansion_symbol.png/revision/latest?cb=20240802205728"},
         "FDN": {"Name": "JumpStart 2025 Beginner Box", "SetCode": "FDN", "ScryfallFrontSetCode": "ffdn", "SetIconImageUrl": "https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/d/d9/FDN_expansion_symbol.png/revision/latest?cb=20240802203917"},

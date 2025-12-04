@@ -207,6 +207,16 @@ async def purgeScryfallCache(ctx, *args):
     endTime = time.time()
     await ctx.author.send(f'Done Purging Scryfall JSON Card Cache... took {endTime - startTime:.5f}s')
 
+@bot.command(name='purgeDeckJSONCache', aliases=['pDJC'], hidden=True)
+@commands.is_owner()
+async def purgeDeckJSONCache(ctx, *args):
+    startTime = time.time()
+    #await ctx.message.id.delete()
+    await ctx.author.send(f'Purging Deck JSON Cache...')
+    botCache.purgeDeckJSONCache()
+    endTime = time.time()
+    await ctx.author.send(f'Done Purging Deck JSON Cache... took {endTime - startTime:.5f}s')
+
 # @bot.command()
 # @commands.is_owner()
 # async def buildListCache(ctx, *args)
@@ -321,7 +331,12 @@ async def list(ctx, *args):
                 if((dataList['Rarity'] == 'R' and queryNumber < 3) or (dataList['Rarity'] == 'C') or (dataList['Rarity'] == 'S' and queryNumber < 3)):
                     uniqueList = f"{uniqueList} ({queryNumber})"
 
-                theListText = botCache.fetchWithCacheGitHubList(dataList['Set'], uniqueList)
+                # Fetch JSON deck data (with fallback to text if JSON unavailable)
+                deckJSON = botCache.fetchWithCacheGitHubDeckJSON(dataList['Set'], uniqueList)
+
+                # Fallback to text-based list if JSON not available
+                if not deckJSON or 'cards' not in deckJSON:
+                    theListText = botCache.fetchWithCacheGitHubList(dataList['Set'], uniqueList)
 
                 theListThemeCardImageUrl = botCache.fetchThemeImageURLWithCacheScryfallCardJSONURL(dataList['Set'], dataList['Theme'])
 
@@ -341,6 +356,15 @@ async def list(ctx, *args):
                 elif(dataList['PrimaryColor'] == "N"):
                     theListColor = Color.dark_grey()
 
+                # Organize cards by type (if JSON available)
+                cardsByType = {}
+                if deckJSON and 'cards' in deckJSON:
+                    for card in deckJSON['cards']:
+                        cardType = card.get('type', 'Unknown')
+                        if cardType not in cardsByType:
+                            cardsByType[cardType] = []
+                        cardsByType[cardType].append(card)
+
                 theListFound = True
                 theListName = uniqueList
                 theListSet = dataList['Set']
@@ -356,16 +380,34 @@ async def list(ctx, *args):
         embed = discord.Embed(title=theListName, color=theListColor) #can also have url, description, color
         embed.set_author(name=jsd.sets[theListSet]['Name'], icon_url=jsd.sets[theListSet]['SetIconImageUrl'])
         embed.set_thumbnail(url=theListThemeCardImageUrl)
-        embed.add_field(name="", value=theListText, inline=False)
 
-        #Once the data is re-worked it would make more sense to categorize the cards as their main types
-        #embed.add_field(name="Planeswalkers", value="1 PW1\n1 PW2", inline=True)
-        #embed.add_field(name="Creatures", value="1 Creature1\n1 Creature2\n2 Creature3", inline=True)
-        #embed.add_field(name="Sorceries", value="1 Sorcery1\n1 Sorcery2\n1 Sorcery3\n1 Sorcery4", inline=True)
-        #embed.add_field(name="Instants", value="1 Instant1", inline=True)
-        #embed.add_field(name="Artifacts", value="1 Artifact1\n1 Artifact2", inline=True)
-        #embed.add_field(name="Enchantments", value="1 Enchantment1\n1 Enchantment2\n1 Enchantment3", inline=True)
-        #embed.add_field(name="Lands", value="1 Land1\n6 Land2\n1 Land3", inline=True)
+        # Use categorized display if JSON data available, otherwise fallback to text
+        if cardsByType and len(cardsByType) > 0:
+            # Define card type order for display
+            typeOrder = ['Planeswalkers', 'Creatures', 'Sorceries', 'Instants', 'Artifacts', 'Enchantments', 'Lands', 'Unknown']
+
+            # Add fields for each card type (only if cards exist)
+            for cardType in typeOrder:
+                if cardType in cardsByType and len(cardsByType[cardType]) > 0:
+                    cards = cardsByType[cardType]
+
+                    # Calculate total count
+                    totalCount = sum(card.get('quantity', 1) for card in cards)
+
+                    # Build card list string
+                    cardList = []
+                    for card in cards:
+                        quantity = card.get('quantity', 1)
+                        name = card.get('name', 'Unknown Card')
+                        cardList.append(f"{quantity} {name}")
+
+                    # Add field with count in title
+                    fieldValue = '\n'.join(cardList)
+                    embed.add_field(name=f"{cardType} ({totalCount})", value=fieldValue, inline=True)
+        else:
+            # Fallback to text-based display
+            embed.add_field(name="", value=theListText, inline=False)
+
         embed.set_footer(text=f'!list Query took {endTime - startTime:.5f}s')
         await ctx.send(embed=embed)
     else:
