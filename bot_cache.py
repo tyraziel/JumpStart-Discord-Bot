@@ -74,7 +74,7 @@ class BotCache:
         startTime = time.time()
         self.masterDeckJSONStats['fetchCount'] = self.masterDeckJSONStats['fetchCount'] + 1
 
-        url = 'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/jumpstart-decks-combined.json'
+        url = 'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/refs/heads/main/etc/jumpstart-decks-combined.json'
         req = requests.get(url)
 
         if(req.status_code == requests.codes.ok):
