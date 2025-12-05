@@ -18,6 +18,9 @@ class BotCache:
     deckJSONCacheStats = {'cacheHit': 0, 'cacheMiss': 0}
     deckJSONFetchStats = {'fetchCount': 0, 'fetchFailures': 0, 'timeFetching': 0}
 
+    masterDeckJSON = None
+    masterDeckJSONStats = {'loaded': False, 'fetchCount': 0, 'fetchFailures': 0, 'timeFetching': 0}
+
     scryFallJSONCardCache = {}
     scryFallJSONCardCacheStats = {'cacheHit': 0, 'cacheMiss': 0}
     scryFallJSONCardFetchStats = {'fetchCount': 0, 'fetchFailures': 0, 'timeFetching': 0}
@@ -64,6 +67,28 @@ class BotCache:
 
         return theListText
 
+    #Get the master combined deck JSON from GitHub
+    def fetchMasterDeckJSON(self):
+        masterJSON = {}
+
+        startTime = time.time()
+        self.masterDeckJSONStats['fetchCount'] = self.masterDeckJSONStats['fetchCount'] + 1
+
+        url = 'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/jumpstart-decks-combined.json'
+        req = requests.get(url)
+
+        if(req.status_code == requests.codes.ok):
+            masterJSON = json.loads(req.text)
+            self.masterDeckJSONStats['loaded'] = True
+        else:
+            self.masterDeckJSONStats['fetchFailures'] = self.masterDeckJSONStats['fetchFailures'] + 1
+            masterJSON = {}
+
+        endTime = time.time()
+        self.masterDeckJSONStats['timeFetching'] = self.masterDeckJSONStats['timeFetching'] + (endTime - startTime)
+
+        return masterJSON
+
     #Get the deck JSON from GitHub
     def fetchGitHubDeckJSON(self, jset, uniqueList):
         deckJSON = {}
@@ -89,6 +114,17 @@ class BotCache:
     def fetchWithCacheGitHubDeckJSON(self, jset, uniqueList):
         deckJSON = {}
 
+        # Try master deck JSON first (load once, use forever)
+        if self.masterDeckJSON is None:
+            self.masterDeckJSON = self.fetchMasterDeckJSON()
+
+        # Check if deck exists in master JSON
+        masterKey = f"{jset}:{uniqueList}"
+        if self.masterDeckJSON and 'decks' in self.masterDeckJSON and masterKey in self.masterDeckJSON['decks']:
+            self.deckJSONCacheStats['cacheHit'] = self.deckJSONCacheStats['cacheHit'] + 1
+            return self.masterDeckJSON['decks'][masterKey]
+
+        # Fallback to individual deck JSON with caching
         cacheKey = f"{jset}{uniqueList}"
         if(cacheKey not in self.deckJSONCache):
             self.deckJSONCacheStats['cacheMiss'] = self.deckJSONCacheStats['cacheMiss'] + 1
@@ -203,16 +239,25 @@ class BotCache:
     def purgeDeckJSONCache(self):
         self.deckJSONCache = {}
 
+    def purgeMasterDeckJSON(self):
+        self.masterDeckJSON = None
+        self.masterDeckJSONStats['loaded'] = False
+
     def __str__(self):
+        masterDeckCount = len(self.masterDeckJSON.get('decks', {})) if self.masterDeckJSON else 0
+        masterLoaded = "✓" if self.masterDeckJSONStats['loaded'] else "✗"
+
         return f"""Bot Cache Statistics: (hits / misses / items)
         uniqueListCache       {self.uniqueListCacheStats['cacheHit']} / {self.uniqueListCacheStats['cacheMiss']} / {len(self.uniqueListCache)}
         deckJSONCache         {self.deckJSONCacheStats['cacheHit']} / {self.deckJSONCacheStats['cacheMiss']} / {len(self.deckJSONCache)}
+        masterDeckJSON        {masterLoaded} Loaded / {masterDeckCount} decks
         scryFallJSONCardCache {self.scryFallJSONCardCacheStats['cacheHit']} / {self.scryFallJSONCardCacheStats['cacheMiss']} / {len(self.scryFallJSONCardCache)}
         imageCache            {self.imageCacheStats['cacheHit']} / {self.imageCacheStats['cacheMiss']} / {len(self.imageCache)}
 
 Bot Fetch Statistics: (fetches (failures)/ total time)
         uniqueListFetch       {self.uniqueListFetchStats['fetchCount']} ({self.uniqueListFetchStats['fetchFailures']}) / {self.uniqueListFetchStats['timeFetching']}
         deckJSONFetch         {self.deckJSONFetchStats['fetchCount']} ({self.deckJSONFetchStats['fetchFailures']}) / {self.deckJSONFetchStats['timeFetching']}
+        masterDeckJSONFetch   {self.masterDeckJSONStats['fetchCount']} ({self.masterDeckJSONStats['fetchFailures']}) / {self.masterDeckJSONStats['timeFetching']}
         scryFallJSONCardFetch {self.scryFallJSONCardFetchStats['fetchCount']} ({self.scryFallJSONCardFetchStats['fetchFailures']}) / {self.scryFallJSONCardFetchStats['timeFetching']}
         imageFetch            {self.imageFetchStats['fetchCount']} ({self.imageFetchStats['fetchFailures']}) / {self.imageFetchStats['timeFetching']}
         """
