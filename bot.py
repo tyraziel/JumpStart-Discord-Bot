@@ -217,6 +217,16 @@ async def purgeDeckJSONCache(ctx, *args):
     endTime = time.time()
     await ctx.author.send(f'Done Purging Deck JSON Cache... took {endTime - startTime:.5f}s')
 
+@bot.command(name='purgeMasterDeck', aliases=['pMD'], hidden=True)
+@commands.is_owner()
+async def purgeMasterDeck(ctx, *args):
+    startTime = time.time()
+    #await ctx.message.id.delete()
+    await ctx.author.send(f'Purging Master Deck JSON...')
+    botCache.purgeMasterDeckJSON()
+    endTime = time.time()
+    await ctx.author.send(f'Done Purging Master Deck JSON... took {endTime - startTime:.5f}s')
+
 # @bot.command()
 # @commands.is_owner()
 # async def buildListCache(ctx, *args)
