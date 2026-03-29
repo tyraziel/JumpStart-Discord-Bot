@@ -414,6 +414,20 @@ async def list(ctx, *args):
                     # Add field with count in title
                     fieldValue = '\n'.join(cardList)
                     embed.add_field(name=f"{cardType} ({totalCount})", value=fieldValue, inline=True)
+
+            # Add tokens section if available
+            if deckJSON and 'tokens' in deckJSON and len(deckJSON['tokens']) > 0:
+                tokenLines = []
+                for token in deckJSON['tokens']:
+                    colors = '/'.join(token.get('colors', [])) or 'C'
+                    power = token.get('power', '')
+                    toughness = token.get('toughness', '')
+                    type_line = token.get('type_line', '')
+                    if power and toughness:
+                        tokenLines.append(f"{colors} {power}/{toughness} {type_line}")
+                    else:
+                        tokenLines.append(f"{colors} {type_line}")
+                embed.add_field(name=f"Tokens ({len(deckJSON['tokens'])})", value='\n'.join(tokenLines), inline=False)
         else:
             # Fallback to text-based display
             embed.add_field(name="", value=theListText, inline=False)
