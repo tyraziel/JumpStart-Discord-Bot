@@ -423,10 +423,12 @@ async def list(ctx, *args):
                     power = token.get('power', '')
                     toughness = token.get('toughness', '')
                     type_line = token.get('type_line', '')
+                    keywords = token.get('keywords', [])
+                    keywordStr = f" [{', '.join(keywords)}]" if keywords else ''
                     if power and toughness:
-                        tokenLines.append(f"{colors} {power}/{toughness} {type_line}")
+                        tokenLines.append(f"{colors} {power}/{toughness} {type_line}{keywordStr}")
                     else:
-                        tokenLines.append(f"{colors} {type_line}")
+                        tokenLines.append(f"{colors} {type_line}{keywordStr}")
                 embed.add_field(name=f"Tokens ({len(deckJSON['tokens'])})", value='\n'.join(tokenLines), inline=False)
         else:
             # Fallback to text-based display
