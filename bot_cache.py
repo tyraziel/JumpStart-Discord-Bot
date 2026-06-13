@@ -4,7 +4,6 @@ import json
 import time
 import os
 import re
-import shutil
 
 from PIL import Image
 import io
@@ -273,15 +272,9 @@ class BotCache:
 
     def purgeImageCache(self):
         self.imageCache = {}
-        if os.path.exists(IMAGE_CACHE_DIR):
-            shutil.rmtree(IMAGE_CACHE_DIR)
-        os.makedirs(IMAGE_CACHE_DIR, exist_ok=True)
 
     def purgeScryfallJSONCardCache(self):
         self.scryFallJSONCardCache = {}
-        if os.path.exists(SCRYFALL_JSON_CACHE_DIR):
-            shutil.rmtree(SCRYFALL_JSON_CACHE_DIR)
-        os.makedirs(SCRYFALL_JSON_CACHE_DIR, exist_ok=True)
 
     def purgeListCache(self):
         self.uniqueListCache = {}
