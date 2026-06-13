@@ -143,20 +143,19 @@ class BotCache:
         startTime = time.time()
         self.scryFallJSONCardFetchStats['fetchCount'] = self.scryFallJSONCardFetchStats['fetchCount'] + 1
 
-        #Fixing scryfall strangness
+        #Fixing scryfall strangeness
         if(jset == "BRO" and exactCardName == "UNEARTH"):
             exactCardName = "UNEARTH-(THEME)"
-        # elif(jset == "J22" and exactCardName == "BLINK"):
-        #     exactCardName = "BLINK-(FRONT-CARD)"
         elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
             exactCardName = "NEER-DO-WELLS"
-        # elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
-        #     exactCardName = "NEER-DO-WELLS"
-        #too many -> TOO-MANY
-        #ne'er-do-wells -> neer-do-wells
-        #fun guys -> FUN-GUYS
 
-        url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(exactCardName)}&pretty=true&set={urllib.parse.quote(jsd.sets[jset]['ScryfallFrontSetCode'])}"
+        # MSB Tutorial decks share the name "Tutorial" on Scryfall - use collector number lookup
+        if jset == "MSB" and exactCardName == "TUTORIAL (CAPTAIN AMERICA)":
+            url = "https://api.scryfall.com/cards/fmsc/2"
+        elif jset == "MSB" and exactCardName == "TUTORIAL (IRON MAN)":
+            url = "https://api.scryfall.com/cards/fmsc/7"
+        else:
+            url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(exactCardName)}&pretty=true&set={urllib.parse.quote(jsd.sets[jset]['ScryfallFrontSetCode'])}"
         req = requests.get(url)
         if(req.status_code == requests.codes.ok):
             scryFallJSON = json.loads(req.text)
