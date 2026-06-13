@@ -9,7 +9,7 @@ import io
 import jumpstartdata as jsd
 
 REQUEST_HEADERS = {
-    'User-Agent': 'JumpStart-Discord-Bot/1.0.5 (Discord bot; tyraziel@gmail.com)'
+    'User-Agent': 'JumpStart-Discord-Bot/1.0.5 (Discord bot; https://github.com/tyraziel/JumpStart-Discord-Bot)'
 }
 
 class BotCache:
