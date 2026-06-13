@@ -98,7 +98,7 @@ async def on_ready():
                 maxProcessingTime = 7
 
             botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
-            time.sleep(100/1000)
+            time.sleep(1)
             endTime = time.time()
 
             #print(f'{maxProcessingTime} -- {(startTime - endTime)}')
@@ -171,7 +171,7 @@ async def buildPickCache(ctx, *args):
         if(theCurrentSet != dataList['Set']):
             theCurrentSet = dataList['Set']
             await ctx.author.send(f"Caching Theme Card Images for Set '{dataList['Set']}'")
-        time.sleep(100/1000)
+        time.sleep(1)
 
     endTime = time.time()
     await ctx.author.send(f'Done Building Pick Cache... took {endTime - startTime:.5f}s')
