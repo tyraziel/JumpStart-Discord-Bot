@@ -12,6 +12,7 @@ import jumpstartdata as jsd
 
 SCRYFALL_JSON_CACHE_DIR = 'cache/scryfall'
 IMAGE_CACHE_DIR = 'cache/images'
+DECK_CACHE_DIR = 'cache/decks'
 
 REQUEST_HEADERS = {
     'User-Agent': 'JumpStart-Discord-Bot/1.0.5 (Discord bot; https://github.com/tyraziel/JumpStart-Discord-Bot)'
@@ -41,6 +42,7 @@ class BotCache:
     def __init__(self):
         os.makedirs(SCRYFALL_JSON_CACHE_DIR, exist_ok=True)
         os.makedirs(IMAGE_CACHE_DIR, exist_ok=True)
+        os.makedirs(DECK_CACHE_DIR, exist_ok=True)
 
     def _diskCacheFilename(self, jset, theme):
         safe = re.sub(r'[^\w\-]', '_', f"{jset}-{theme}")
@@ -138,11 +140,19 @@ class BotCache:
             self.deckJSONCacheStats['cacheHit'] = self.deckJSONCacheStats['cacheHit'] + 1
             return self.masterDeckJSON['decks'][masterKey]
 
-        # Fallback to individual deck JSON with caching
+        # Fallback to individual deck JSON with memory + disk caching
         cacheKey = f"{jset}{uniqueList}"
         if(cacheKey not in self.deckJSONCache):
             self.deckJSONCacheStats['cacheMiss'] = self.deckJSONCacheStats['cacheMiss'] + 1
-            deckJSON = self.fetchGitHubDeckJSON(jset, uniqueList)
+            diskPath = os.path.join(DECK_CACHE_DIR, self._diskCacheFilename(jset, uniqueList) + '.json')
+            if os.path.exists(diskPath):
+                with open(diskPath, 'r', encoding='utf-8') as f:
+                    deckJSON = json.load(f)
+            else:
+                deckJSON = self.fetchGitHubDeckJSON(jset, uniqueList)
+                if deckJSON:
+                    with open(diskPath, 'w', encoding='utf-8') as f:
+                        json.dump(deckJSON, f)
             self.deckJSONCache[cacheKey] = deckJSON
         else:
             self.deckJSONCacheStats['cacheHit'] = self.deckJSONCacheStats['cacheHit'] + 1
@@ -291,10 +301,11 @@ class BotCache:
         masterLoaded = "✓" if self.masterDeckJSONStats['loaded'] else "✗"
         diskJSONCount = len(os.listdir(SCRYFALL_JSON_CACHE_DIR)) if os.path.exists(SCRYFALL_JSON_CACHE_DIR) else 0
         diskImageCount = len(os.listdir(IMAGE_CACHE_DIR)) if os.path.exists(IMAGE_CACHE_DIR) else 0
+        diskDeckCount = len(os.listdir(DECK_CACHE_DIR)) if os.path.exists(DECK_CACHE_DIR) else 0
 
         return f"""Bot Cache Statistics: (hits / misses / items)
         uniqueListCache       {self.uniqueListCacheStats['cacheHit']} / {self.uniqueListCacheStats['cacheMiss']} / {len(self.uniqueListCache)}
-        deckJSONCache         {self.deckJSONCacheStats['cacheHit']} / {self.deckJSONCacheStats['cacheMiss']} / {len(self.deckJSONCache)}
+        deckJSONCache         {self.deckJSONCacheStats['cacheHit']} / {self.deckJSONCacheStats['cacheMiss']} / {len(self.deckJSONCache)} (disk: {diskDeckCount})
         masterDeckJSON        {masterLoaded} Loaded / {masterDeckCount} decks
         scryFallJSONCardCache {self.scryFallJSONCardCacheStats['cacheHit']} / {self.scryFallJSONCardCacheStats['cacheMiss']} / {len(self.scryFallJSONCardCache)} (disk: {diskJSONCount})
         imageCache            {self.imageCacheStats['cacheHit']} / {self.imageCacheStats['cacheMiss']} / {len(self.imageCache)} (disk: {diskImageCount})
