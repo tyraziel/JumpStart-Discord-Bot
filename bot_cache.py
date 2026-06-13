@@ -175,20 +175,30 @@ class BotCache:
 
         return scryFallJSON
 
+    def _extractImageUri(self, scryFallJSON):
+        if 'image_uris' in scryFallJSON:
+            return scryFallJSON['image_uris']['small']
+        if 'card_faces' in scryFallJSON and scryFallJSON['card_faces']:
+            face = scryFallJSON['card_faces'][0]
+            if 'image_uris' in face:
+                return face['image_uris']['small']
+        return ''
+
     #Get the card image url from scryFall or the cache
     def fetchThemeImageURLWithCacheScryfallCardJSONURL(self, jset, theme):
         theListThemeCardImageUrl = ""
-        
+
         cacheKey = f"{jset}{theme}"
 
         if(cacheKey not in self.scryFallJSONCardCache):
             self.scryFallJSONCardCacheStats['cacheMiss'] = self.scryFallJSONCardCacheStats['cacheMiss'] + 1
             scryFallJSON = self.fetchScryFallCardJSON(jset, theme)
-            self.scryFallJSONCardCache[cacheKey] = scryFallJSON
-            theListThemeCardImageUrl = self.scryFallJSONCardCache[cacheKey]["image_uris"]["small"]
+            if scryFallJSON:
+                self.scryFallJSONCardCache[cacheKey] = scryFallJSON
+            theListThemeCardImageUrl = self._extractImageUri(scryFallJSON)
         else:
             self.scryFallJSONCardCacheStats['cacheHit'] = self.scryFallJSONCardCacheStats['cacheHit'] + 1
-            theListThemeCardImageUrl = self.scryFallJSONCardCache[cacheKey]["image_uris"]["small"]
+            theListThemeCardImageUrl = self._extractImageUri(self.scryFallJSONCardCache[cacheKey])
 
         return theListThemeCardImageUrl
 
@@ -197,6 +207,9 @@ class BotCache:
         cardImage = Image.new('RGBA', (1, 1))
 
         theListThemeCardImageUrl = self.fetchThemeImageURLWithCacheScryfallCardJSONURL(jset, exactCardName)
+
+        if not theListThemeCardImageUrl:
+            return cardImage
 
         startTime = time.time()
 
