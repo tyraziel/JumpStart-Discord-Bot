@@ -63,13 +63,13 @@ def _safe_filename(jset, name):
 
 def _all_theme_entries():
     """Yield (set, theme_base_name) for every unique theme (one per rarity entry)."""
-    for entry in jsd.themes:
+    for entry in jsd.jumpstart:
         yield entry['Set'], entry['Theme']
 
 
 def _all_deck_variants():
     """Yield (set, variant_name) for every deck list file that should exist on GitHub."""
-    for entry in jsd.themes:
+    for entry in jsd.jumpstart:
         jset = entry['Set']
         theme = entry['Theme']
         count = RARITY_VARIANTS.get(entry.get('Rarity', 'M'), 1)
