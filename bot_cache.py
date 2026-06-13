@@ -8,6 +8,10 @@ import io
 
 import jumpstartdata as jsd
 
+REQUEST_HEADERS = {
+    'User-Agent': 'JumpStart-Discord-Bot/1.0.5 (Discord bot; tyraziel@gmail.com)'
+}
+
 class BotCache:
 
     uniqueListCache = {}
@@ -40,7 +44,7 @@ class BotCache:
         self.uniqueListFetchStats['fetchCount'] = self.uniqueListFetchStats['fetchCount'] + 1
 
         url = f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/{urllib.parse.quote(jset)}/{urllib.parse.quote(uniqueList)}.txt'
-        req = requests.get(url)
+        req = requests.get(url, headers=REQUEST_HEADERS)
 
         if(req.status_code == requests.codes.ok):
             theListText = f'{req.text}'
@@ -75,7 +79,7 @@ class BotCache:
         self.masterDeckJSONStats['fetchCount'] = self.masterDeckJSONStats['fetchCount'] + 1
 
         url = 'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/refs/heads/main/etc/jumpstart-decks-combined.json'
-        req = requests.get(url)
+        req = requests.get(url, headers=REQUEST_HEADERS)
 
         if(req.status_code == requests.codes.ok):
             masterJSON = json.loads(req.text)
@@ -97,7 +101,7 @@ class BotCache:
         self.deckJSONFetchStats['fetchCount'] = self.deckJSONFetchStats['fetchCount'] + 1
 
         url = f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/{urllib.parse.quote(jset)}/{urllib.parse.quote(uniqueList)}.json'
-        req = requests.get(url)
+        req = requests.get(url, headers=REQUEST_HEADERS)
 
         if(req.status_code == requests.codes.ok):
             deckJSON = json.loads(req.text)
@@ -158,7 +162,7 @@ class BotCache:
             url = "https://api.scryfall.com/cards/fmsc/23"
         else:
             url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(exactCardName)}&pretty=true&set={urllib.parse.quote(jsd.sets[jset]['ScryfallFrontSetCode'])}"
-        req = requests.get(url)
+        req = requests.get(url, headers=REQUEST_HEADERS)
         if(req.status_code == requests.codes.ok):
             scryFallJSON = json.loads(req.text)
         else:
@@ -198,7 +202,7 @@ class BotCache:
 
         self.imageFetchStats['fetchCount'] = self.imageFetchStats['fetchCount'] + 1
 
-        imageDataResults = requests.get(theListThemeCardImageUrl, stream=True)
+        imageDataResults = requests.get(theListThemeCardImageUrl, headers=REQUEST_HEADERS, stream=True)
         if(imageDataResults.status_code == requests.codes.ok):
             cardImage = Image.open(imageDataResults.raw)
         else:
