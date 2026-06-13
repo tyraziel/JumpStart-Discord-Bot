@@ -311,6 +311,7 @@ jumpstart = [
     {"Set": "MSH", "Theme": "WAKANDA", "Rarity": "M", "PrimaryColor": "W"},
     {"Set": "MSH", "Theme": "WEB-SLINGING", "Rarity": "M", "PrimaryColor": "W"},
     {"Set": "MSH", "Theme": "WILD", "Rarity": "M", "PrimaryColor": "G"},
+    {"Set": "MSH", "Theme": "YOUNG AVENGERS", "Rarity": "M", "PrimaryColor": "R"},
 
     {"Set": "MSB", "Theme": "ARTIFACTS", "Rarity": "U", "PrimaryColor": "U"},
     {"Set": "MSB", "Theme": "CARD DRAW", "Rarity": "U", "PrimaryColor": "U"},
