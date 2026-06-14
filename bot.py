@@ -86,6 +86,11 @@ async def on_ready():
 
     if(cliArgs.loadcache):
         logger.info(f'We will be pre-fetching theme json from ScryFall\'s API and theme images from the IO site')
+
+        # Warm master deck JSON into memory first
+        logger.info(f'Warming master deck JSON...')
+        botCache.fetchWithCacheGitHubDeckJSON(jsd.jumpstart[0]['Set'], jsd.jumpstart[0]['Theme'])
+
         for dataList in jsd.jumpstart:
             startTime = time.time()
             counter = counter + 1
@@ -97,6 +102,7 @@ async def on_ready():
                 #print(f'Bot PING on set change.')
                 maxProcessingTime = 7
 
+            botCache.fetchThemeImageURLWithCacheScryfallCardJSONURL(dataList['Set'], dataList['Theme'])
             botCache.fetchThemeImageWithCacheScryfallCardImage(dataList['Set'], dataList['Theme'])
             endTime = time.time()
 
