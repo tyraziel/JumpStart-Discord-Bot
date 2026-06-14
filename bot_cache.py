@@ -168,7 +168,7 @@ class BotCache:
         self.scryFallJSONCardFetchStats['fetchCount'] = self.scryFallJSONCardFetchStats['fetchCount'] + 1
 
         #Fixing scryfall strangeness
-        if(jset == "BRO" and exactCardName == "UNEARTH"):
+        if(jset == "BRO" and exactCardName == "UNEARTHED"):
             exactCardName = "UNEARTH-(THEME)"
         elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
             exactCardName = "NEER-DO-WELLS"
