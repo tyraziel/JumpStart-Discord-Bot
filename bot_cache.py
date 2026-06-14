@@ -210,9 +210,11 @@ class BotCache:
             self.scryFallJSONCardFetchStats['fetchFailures'] = self.scryFallJSONCardFetchStats['fetchFailures'] + 1
             scryFallJSON = json.loads("{}")
             print(f"FAILURE - '{jset}' '{exactCardName}'\n")
-        
+
         endTime = time.time()
         self.scryFallJSONCardFetchStats['timeFetching'] = self.scryFallJSONCardFetchStats['timeFetching'] + (endTime - startTime)
+
+        time.sleep(1)  # Scryfall rate limit: only sleeps when an actual API call was made
 
         return scryFallJSON
 
