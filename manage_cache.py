@@ -164,9 +164,11 @@ def _build_decks(force):
 
         print(f"  [{i:3}/{total}] FETCH {jset} - {variant}", end='', flush=True)
 
+        #Fixing GitHub filename strangeness
+        github_variant = variant.replace("N'ER-DO-WELLS", "NER-DO-WELLS") if jset == "J25" else variant
         url = (
             f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/'
-            f'{urllib.parse.quote(jset)}/{urllib.parse.quote(variant)}.json'
+            f'{urllib.parse.quote(jset)}/{urllib.parse.quote(github_variant)}.json'
         )
         try:
             req = requests.get(url, headers=REQUEST_HEADERS, timeout=10)
