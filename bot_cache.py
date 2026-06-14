@@ -170,7 +170,7 @@ class BotCache:
         #Fixing scryfall strangeness
         if(jset == "BRO" and exactCardName == "UNEARTHED"):
             exactCardName = "UNEARTH-(THEME)"
-        elif(jset == "J25" and exactCardName == "N'ER-DO-WELLS"):
+        elif(jset == "J25" and exactCardName == "NER-DO-WELLS"):
             exactCardName = "NEER-DO-WELLS"
 
         # Cards that need collector number lookup due to naming conflicts on Scryfall
