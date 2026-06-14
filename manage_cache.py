@@ -116,7 +116,7 @@ def _build_images(force):
         img_path = os.path.join(IMAGE_CACHE_DIR, key + '.png')
         json_path = os.path.join(SCRYFALL_JSON_CACHE_DIR, key + '.json')
 
-        if not force and os.path.exists(img_path):
+        if not force and os.path.exists(img_path) and os.path.exists(json_path):
             print(f"  [{i:3}/{total}] SKIP  {jset} - {theme}")
             skipped += 1
             continue
