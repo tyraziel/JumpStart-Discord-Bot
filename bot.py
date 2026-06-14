@@ -85,7 +85,7 @@ async def on_ready():
     theCurrentSet = ""
 
     if(cliArgs.loadcache):
-        logger.info(f'We will be pre-fetching theme json from ScryFall\'s API and theme images from the IO site')
+        logger.info(f'Warming all cache tiers: master deck JSON, Scryfall card JSON, and card images (disk → API fallback)')
 
         # Warm master deck JSON into memory first
         logger.info(f'Warming master deck JSON...')
