@@ -4,11 +4,14 @@ import json
 import time
 import os
 import re
+import logging
 
 from PIL import Image
 import io
 
 import jumpstartdata as jsd
+
+logger = logging.getLogger(__name__)
 
 SCRYFALL_JSON_CACHE_DIR = 'cache/scryfall'
 IMAGE_CACHE_DIR = 'cache/images'
@@ -79,10 +82,12 @@ class BotCache:
         cacheKey = f"{jset}{uniqueList}"
         if(cacheKey not in self.uniqueListCache):
             self.uniqueListCacheStats['cacheMiss'] = self.uniqueListCacheStats['cacheMiss'] + 1
+            logger.info(f"[list] MISS memory → fetching GitHub: {jset} / {uniqueList}")
             theListText = self.fetchGitHubList(jset, uniqueList)
             self.uniqueListCache[cacheKey] = theListText
         else:
             self.uniqueListCacheStats['cacheHit'] = self.uniqueListCacheStats['cacheHit'] + 1
+            logger.info(f"[list] HIT memory: {jset} / {uniqueList}")
             theListText = self.uniqueListCache[cacheKey]
 
         return theListText
@@ -140,23 +145,28 @@ class BotCache:
 
         # Try master deck JSON first (load once, use forever)
         if self.masterDeckJSON is None:
+            logger.info(f"[deck] Loading master deck JSON from GitHub")
             self.masterDeckJSON = self.fetchMasterDeckJSON()
 
         # Check if deck exists in master JSON
         masterKey = f"{jset}:{uniqueList}"
         if self.masterDeckJSON and 'decks' in self.masterDeckJSON and masterKey in self.masterDeckJSON['decks']:
             self.deckJSONCacheStats['cacheHit'] = self.deckJSONCacheStats['cacheHit'] + 1
+            logger.info(f"[deck] HIT master JSON: {jset} / {uniqueList}")
             return self.masterDeckJSON['decks'][masterKey]
 
         # Fallback to individual deck JSON with memory + disk caching
+        logger.info(f"[deck] MISS master JSON: {jset} / {uniqueList}")
         cacheKey = f"{jset}{uniqueList}"
         if(cacheKey not in self.deckJSONCache):
             self.deckJSONCacheStats['cacheMiss'] = self.deckJSONCacheStats['cacheMiss'] + 1
             diskPath = os.path.join(DECK_CACHE_DIR, self._diskCacheFilename(jset, uniqueList) + '.json')
             if os.path.exists(diskPath):
+                logger.info(f"[deck] HIT disk: {jset} / {uniqueList}")
                 with open(diskPath, 'r', encoding='utf-8') as f:
                     deckJSON = json.load(f)
             else:
+                logger.info(f"[deck] MISS disk → fetching GitHub: {jset} / {uniqueList}")
                 deckJSON = self.fetchGitHubDeckJSON(jset, uniqueList)
                 if deckJSON:
                     with open(diskPath, 'w', encoding='utf-8') as f:
@@ -164,6 +174,7 @@ class BotCache:
             self.deckJSONCache[cacheKey] = deckJSON
         else:
             self.deckJSONCacheStats['cacheHit'] = self.deckJSONCacheStats['cacheHit'] + 1
+            logger.info(f"[deck] HIT memory: {jset} / {uniqueList}")
             deckJSON = self.deckJSONCache[cacheKey]
 
         return deckJSON
@@ -224,10 +235,12 @@ class BotCache:
         if(cacheKey not in self.scryFallJSONCardCache):
             self.scryFallJSONCardCacheStats['cacheMiss'] = self.scryFallJSONCardCacheStats['cacheMiss'] + 1
             if os.path.exists(diskPath):
+                logger.info(f"[scryfall-json] HIT disk: {jset} / {theme}")
                 with open(diskPath, 'r', encoding='utf-8') as f:
                     scryFallJSON = json.load(f)
                 self.scryFallJSONCardCache[cacheKey] = scryFallJSON
             else:
+                logger.info(f"[scryfall-json] MISS disk → fetching Scryfall API: {jset} / {theme}")
                 scryFallJSON = self.fetchScryFallCardJSON(jset, theme)
                 if scryFallJSON:
                     self.scryFallJSONCardCache[cacheKey] = scryFallJSON
@@ -236,6 +249,7 @@ class BotCache:
             theListThemeCardImageUrl = self._extractImageUri(scryFallJSON)
         else:
             self.scryFallJSONCardCacheStats['cacheHit'] = self.scryFallJSONCardCacheStats['cacheHit'] + 1
+            logger.info(f"[scryfall-json] HIT memory: {jset} / {theme}")
             theListThemeCardImageUrl = self._extractImageUri(self.scryFallJSONCardCache[cacheKey])
 
         return theListThemeCardImageUrl
@@ -277,15 +291,18 @@ class BotCache:
         if(cacheKey not in self.imageCache):
             self.imageCacheStats['cacheMiss'] = self.imageCacheStats['cacheMiss'] + 1
             if os.path.exists(diskPath):
+                logger.info(f"[image] HIT disk: {jset} / {theme}")
                 cardImage = Image.open(diskPath).copy()
                 self.imageCache[cacheKey] = cardImage
             else:
+                logger.info(f"[image] MISS disk → fetching Scryfall image: {jset} / {theme}")
                 cardImage = self.fetchScryFallCardImage(jset, theme)
                 self.imageCache[cacheKey] = cardImage
                 if cardImage.size != (1, 1):
                     cardImage.save(diskPath, 'PNG')
         else:
             self.imageCacheStats['cacheHit'] = self.imageCacheStats['cacheHit'] + 1
+            logger.info(f"[image] HIT memory: {jset} / {theme}")
             cardImage = self.imageCache[cacheKey]
 
         return cardImage
