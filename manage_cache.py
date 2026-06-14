@@ -138,7 +138,6 @@ def _build_images(force):
             print(f"  OK ({size_kb} KB)")
             fetched += 1
 
-        time.sleep(1)  # Scryfall rate limit: 1 req/s
 
     print(f"\nDone. fetched={fetched}  skipped={skipped}  failed={failed}")
 
