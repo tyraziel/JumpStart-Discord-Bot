@@ -145,8 +145,18 @@ class BotCache:
 
         # Try master deck JSON first (load once, use forever)
         if self.masterDeckJSON is None:
-            logger.info(f"[deck] Loading master deck JSON from GitHub")
-            self.masterDeckJSON = self.fetchMasterDeckJSON()
+            masterDiskPath = os.path.join(DECK_CACHE_DIR, 'master.json')
+            if os.path.exists(masterDiskPath):
+                logger.info(f"[deck] Loading master deck JSON from disk")
+                with open(masterDiskPath, 'r', encoding='utf-8') as f:
+                    self.masterDeckJSON = json.load(f)
+                self.masterDeckJSONStats['loaded'] = True
+            else:
+                logger.info(f"[deck] Loading master deck JSON from GitHub")
+                self.masterDeckJSON = self.fetchMasterDeckJSON()
+                if self.masterDeckJSON:
+                    with open(masterDiskPath, 'w', encoding='utf-8') as f:
+                        json.dump(self.masterDeckJSON, f)
 
         # Check if deck exists in master JSON
         masterKey = f"{jset}:{uniqueList}"
