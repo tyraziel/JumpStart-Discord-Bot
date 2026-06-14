@@ -280,6 +280,8 @@ class BotCache:
 
         self.imageFetchStats['timeFetching'] = self.imageFetchStats['timeFetching'] + (endTime - startTime)
 
+        time.sleep(1)  # Scryfall rate limit: only sleeps when an actual image fetch was made
+
         return cardImage
 
 
