@@ -180,6 +180,8 @@ class BotCache:
             url = "https://api.scryfall.com/cards/fmsc/7"
         elif jset == "MSH" and exactCardName == "BLINK":
             url = "https://api.scryfall.com/cards/fmsc/23"
+        elif jset == "MSH" and exactCardName == "KANG DYNASTY":
+            url = "https://api.scryfall.com/cards/fmsc/27"
         else:
             url = f"https://api.scryfall.com/cards/named?exact={urllib.parse.quote(exactCardName)}&pretty=true&set={urllib.parse.quote(jsd.sets[jset]['ScryfallFrontSetCode'])}"
         req = requests.get(url, headers=REQUEST_HEADERS)
