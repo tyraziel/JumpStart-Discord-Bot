@@ -163,7 +163,7 @@ jumpstart = [
     {"Set": "J25", "Theme" : "DROWNED", "Rarity": "R", "PrimaryColor": "U"},
     {"Set": "J25", "Theme" : "WIZARDS", "Rarity": "R", "PrimaryColor": "U"},
     {"Set": "J25", "Theme" : "TREASURES", "Rarity": "R", "PrimaryColor": "B"},
-    {"Set": "J25", "Theme" : "NER-DO-WELLS", "Rarity": "R", "PrimaryColor": "B"},
+    {"Set": "J25", "Theme" : "N'ER-DO-WELLS", "Rarity": "R", "PrimaryColor": "B"},
     {"Set": "J25", "Theme" : "ICKY", "Rarity": "R", "PrimaryColor": "B"},
     {"Set": "J25", "Theme" : "DRAGONS", "Rarity": "R", "PrimaryColor": "R"},
     {"Set": "J25", "Theme" : "COPIED", "Rarity": "R", "PrimaryColor": "R"},

@@ -55,6 +55,10 @@ class BotCache:
         startTime = time.time()
         self.uniqueListFetchStats['fetchCount'] = self.uniqueListFetchStats['fetchCount'] + 1
 
+        #Fixing GitHub filename strangeness
+        if jset == "J25" and uniqueList.startswith("N'ER-DO-WELLS"):
+            uniqueList = uniqueList.replace("N'ER-DO-WELLS", "NER-DO-WELLS")
+
         url = f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/{urllib.parse.quote(jset)}/{urllib.parse.quote(uniqueList)}.txt'
         req = requests.get(url, headers=REQUEST_HEADERS)
 
@@ -111,6 +115,10 @@ class BotCache:
 
         startTime = time.time()
         self.deckJSONFetchStats['fetchCount'] = self.deckJSONFetchStats['fetchCount'] + 1
+
+        #Fixing GitHub filename strangeness
+        if jset == "J25" and uniqueList.startswith("N'ER-DO-WELLS"):
+            uniqueList = uniqueList.replace("N'ER-DO-WELLS", "NER-DO-WELLS")
 
         url = f'https://raw.githubusercontent.com/tyraziel/MTG-JumpStart/main/etc/{urllib.parse.quote(jset)}/{urllib.parse.quote(uniqueList)}.json'
         req = requests.get(url, headers=REQUEST_HEADERS)
